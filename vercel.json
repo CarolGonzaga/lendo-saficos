@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/clubedascolecionadoras/assets/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/assets/:path*"
+    },
+    {
       "source": "/clubedascolecionadoras",
       "destination": "https://clube-das-colecionadoras.vercel.app/clubedascolecionadoras"
     },
