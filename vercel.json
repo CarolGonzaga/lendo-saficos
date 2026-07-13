@@ -2,6 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/clubedascolecionadoras",
+      "destination": "https://clube-das-colecionadoras.vercel.app/"
+    },
+    {
+      "source": "/clubedascolecionadoras/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/:path*"
+    },
+    {
       "source": "/lista120livrossaficos",
       "destination": "https://lista-120-livros-saficos.vercel.app/"
     },

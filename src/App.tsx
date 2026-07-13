@@ -39,7 +39,7 @@ function App() {
               <p>
                 Já disponível: <strong>120 livros sáficos lançados em 2026</strong>
               </p>
-              <a className="books-button" href="/lista120livrossaficos">
+              <a className="books-button" href="/lista120livrossaficos" target="_blank" rel="noreferrer">
                 Ver a lista completa <span>→</span>
               </a>
             </div>
@@ -90,7 +90,7 @@ function App() {
               <br />
               Responda quizzes, colecione figurinhas e desbloqueie recompensas exclusivas.
             </p>
-            <a className="club-button" href="/clube" aria-label="Entrar no Clube das Colecionadoras">
+            <a className="club-button" href="/clubedascolecionadoras" aria-label="Entrar no Clube das Colecionadoras">
               Entrar no Clube <span>→</span>
             </a>
           </article>
