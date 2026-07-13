@@ -21,7 +21,7 @@ function App() {
         <section className="intro">
           <header className="topbar">
             <a className="brand" href="/" aria-label="Lendo Sáficos, página inicial">
-              <img src="/assets/lendo-saficos-logo.png" alt="Lendo Sáficos" />
+              <img src="/site-assets/lendo-saficos-logo.png" alt="Lendo Sáficos" />
             </a>
             <span className="status"># Em construção</span>
           </header>
