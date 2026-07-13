@@ -8,7 +8,6 @@ body { color: var(--ink); background: #fff; font-family: "DM Sans", sans-serif; 
 .brand { display: block; width: 155px; }
 .brand img { display: block; width: 100%; height: auto; }
 .status { color: #ae2761; background: #fff0f6; border: 1px solid #ffd0e3; border-radius: 99px; padding: 9px 14px; font-size: 10.8px; font-weight: 700; white-space: nowrap; }
-.status span { display: inline-block; width: 6px; height: 6px; background: #ef2c81; border-radius: 99px; margin: 0 6px 1px 0; box-shadow: 0 0 0 3px #ffd4e6; }
 .intro-copy { width: min(100%, 590px); margin: auto 0; transform: translateY(13px); }
 .eyebrow { color: #ca4278; text-transform: uppercase; font-size: 9.9px; font-weight: 700; letter-spacing: .16em; margin: 0 0 19px; }
 h1, h2 { font-family: "Playfair Display", Georgia, serif; letter-spacing: -.055em; }
@@ -17,20 +16,12 @@ h1 em { color: var(--pink); font-weight: 600; }
 .description { color: #765367; font-size: 13px; line-height: 1.7; max-width: 505px; margin: 0; }
 .books-callout { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; margin-top: 25px; }.books-callout p { margin: 0; color: #ad416e; font-size: 10.8px; }.books-callout strong { color: #8e2454; }
 .books-button { display: inline-flex; align-items: center; gap: 18px; padding: 10px 13px 10px 16px; background: var(--pink); border-radius: 999px; box-shadow: 0 8px 18px rgba(211, 33, 112, .19); color: #fff; font-size: 10.8px; font-weight: 700; text-decoration: none; transition: .2s ease; }.books-button:hover { background: #c81764; transform: translateY(-2px); }.books-button span { display: grid; place-items: center; width: 21px; height: 21px; border-radius: 50%; color: #c81764; background: #fff; font-size: 13px; }
-.left-footer { display: flex; align-items: center; gap: 18px; color: #956b81; font-size: 10.8px; margin-top: 32px; }
-.left-footer p { margin: 0; }
-.socials { display: flex; gap: 10px; }
-.socials a { display: grid; place-items: center; width: 42px; height: 42px; color: #be376e; background: #fde5ee; border: 1px solid #f8d4e2; border-radius: 50%; transition: .2s ease; }
-.socials a:hover { background: var(--pink); border-color: var(--pink); color: #fff; transform: translateY(-2px); }
-.socials svg { display: block; flex: 0 0 auto; width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.socials svg.filled-icon { fill: currentColor; stroke: none; }.socials .tiktok-icon { width: 22px; height: 22px; }.socials .whatsapp-icon { width: 21px; height: 21px; }
-.socials svg path:only-child { fill: currentColor; stroke: none; }.socials svg .dot { fill: currentColor; stroke: none; }
-.club { isolation: isolate; position: relative; min-height: 700px; overflow: hidden; display: grid; place-items: center; background: linear-gradient(rgba(245, 177, 210, .15), rgba(194, 116, 191, .18)), url("public/assets/fundo-lendo-saficos.jpeg") center 43% / cover no-repeat; }
-.aurora { position: absolute; z-index: -1; inset: 0; background: linear-gradient(145deg, rgba(255,255,255,.14), transparent 50%, rgba(126,39,104,.12)); }
+.left-footer { display: flex; align-items: center; gap: 18px; color: #956b81; font-size: 10.8px; margin-top: 32px; }.left-footer p { margin: 0; }
+.socials { display: flex; gap: 10px; }.socials a { display: grid; place-items: center; width: 42px; height: 42px; color: #be376e; background: #fde5ee; border: 1px solid #f8d4e2; border-radius: 50%; transition: .2s ease; }.socials a:hover { background: var(--pink); border-color: var(--pink); color: #fff; transform: translateY(-2px); }
+.socials svg { display: block; flex: 0 0 auto; width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }.socials svg.filled-icon, .socials svg path:only-child, .socials svg .dot { fill: currentColor; stroke: none; }.socials .tiktok-icon { width: 22px; height: 22px; }.socials .whatsapp-icon { width: 21px; height: 21px; }
+.club { isolation: isolate; position: relative; min-height: 700px; overflow: hidden; display: grid; place-items: center; background: linear-gradient(rgba(245, 177, 210, .15), rgba(194, 116, 191, .18)), url("/assets/fundo-lendo-saficos.jpeg") center 43% / cover no-repeat; }.aurora { position: absolute; z-index: -1; inset: 0; background: linear-gradient(145deg, rgba(255,255,255,.14), transparent 50%, rgba(126,39,104,.12)); }
 .club-card { position: relative; z-index: 1; width: min(78%, 520px); padding: clamp(30px, 4.3vw, 57px); color: #fff; background: linear-gradient(143deg, rgba(255,255,255,.36), rgba(255,255,255,.13)); border: 1px solid rgba(255,255,255,.53); border-radius: 28px; box-shadow: 0 20px 50px rgba(122, 20, 75, .18), inset 0 1px 0 rgba(255,255,255,.3); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
-.card-kicker { font-size: 9px; text-transform: uppercase; font-weight: 700; letter-spacing: .13em; margin-bottom: 15px; }.heart { color: #ffe3f1; font-size: 12.6px; margin-right: 5px; }
-h2 { margin: 0 0 17px; font-size: clamp(22.5px, 2.205vw, 34.2px); line-height: 1.06; font-weight: 700; color: #fff; }h2 i { color: #ffe5f1; font-weight: 600; }
-.club-card p { margin: 0 0 24px; max-width: 360px; color: #fff8fc; font-size: 11.7px; line-height: 1.58; }
+.card-kicker { font-size: 9px; text-transform: uppercase; font-weight: 700; letter-spacing: .13em; margin-bottom: 15px; }.heart { color: #ffe3f1; font-size: 12.6px; margin-right: 5px; }h2 { margin: 0 0 17px; font-size: clamp(22.5px, 2.205vw, 34.2px); line-height: 1.06; font-weight: 700; color: #fff; }h2 i { color: #ffe5f1; font-weight: 600; }.club-card p { margin: 0 0 24px; max-width: 360px; color: #fff8fc; font-size: 11.7px; line-height: 1.58; }
 .club-button { display: inline-flex; align-items: center; gap: 20px; padding: 11px 13px 11px 17px; color: #a91558; background: #fff; border-radius: 999px; box-shadow: 0 6px 18px rgba(128,11,65,.15); font-weight: 700; font-size: 10.8px; text-decoration: none; transition: .2s ease; }.club-button:hover { background: #fff0f7; transform: translateY(-2px); }.club-button span { display: grid; place-items: center; width: 22px; height: 22px; color: #fff; background: var(--pink); border-radius: 50%; font-size: 14.4px; }
 .site-footer { min-height: 43px; display: flex; justify-content: center; align-items: center; gap: 5px; padding: 11px 18px; text-align: center; color: #9d6e84; background: #fff9fc; border-top: 1px solid #fde8f1; font-size: 9.9px; }.site-footer a { color: #d4266f; font-weight: 700; text-decoration: none; }.site-footer a:hover { text-decoration: underline; }
 @media (min-width: 801px) { .status { transform: translateX(clamp(28px, 3.5vw, 56px)); } }
