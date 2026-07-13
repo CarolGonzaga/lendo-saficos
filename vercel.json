@@ -3,11 +3,11 @@
   "rewrites": [
     {
       "source": "/clubedascolecionadoras",
-      "destination": "https://clube-das-colecionadoras.vercel.app/"
+      "destination": "https://clube-das-colecionadoras.vercel.app/clubedascolecionadoras"
     },
     {
       "source": "/clubedascolecionadoras/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/:path*"
+      "destination": "https://clube-das-colecionadoras.vercel.app/clubedascolecionadoras/:path*"
     },
     {
       "source": "/lista120livrossaficos",
