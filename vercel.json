@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/lista120livrossaficos",
+      "destination": "https://lista-120-livros-saficos.vercel.app/"
+    },
+    {
+      "source": "/lista120livrossaficos/:path*",
+      "destination": "https://lista-120-livros-saficos.vercel.app/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
