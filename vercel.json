@@ -2,6 +2,46 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
+      "source": "/avatar/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/avatar/:path*"
+    },
+    {
+      "source": "/autographs/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/autographs/:path*"
+    },
+    {
+      "source": "/covers/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/covers/:path*"
+    },
+    {
+      "source": "/frames/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/frames/:path*"
+    },
+    {
+      "source": "/icons/:path*",
+      "destination": "https://clube-das-colecionadoras.vercel.app/icons/:path*"
+    },
+    {
+      "source": "/logo-ls.png",
+      "destination": "https://clube-das-colecionadoras.vercel.app/logo-ls.png"
+    },
+    {
+      "source": "/logo_text.png",
+      "destination": "https://clube-das-colecionadoras.vercel.app/logo_text.png"
+    },
+    {
+      "source": "/verso-card.png",
+      "destination": "https://clube-das-colecionadoras.vercel.app/verso-card.png"
+    },
+    {
+      "source": "/card_pink.png",
+      "destination": "https://clube-das-colecionadoras.vercel.app/card_pink.png"
+    },
+    {
+      "source": "/card_wine.png",
+      "destination": "https://clube-das-colecionadoras.vercel.app/card_wine.png"
+    },
+    {
       "source": "/clubedascolecionadoras/assets/:path*",
       "destination": "https://clube-das-colecionadoras.vercel.app/assets/:path*"
     },
