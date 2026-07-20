@@ -50,63 +50,71 @@
   "rewrites": [
     {
       "source": "/assets/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/assets/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/assets/:path*"
     },
     {
       "source": "/avatar/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/avatar/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/avatar/:path*"
     },
     {
       "source": "/autographs/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/autographs/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/autographs/:path*"
     },
     {
       "source": "/covers/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/covers/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/covers/:path*"
+    },
+    {
+      "source": "/card story/:path*",
+      "destination": "https://clube-das-colecionadoras2.vercel.app/card%20story/:path*"
+    },
+    {
+      "source": "/banner/:path*",
+      "destination": "https://clube-das-colecionadoras2.vercel.app/banner/:path*"
     },
     {
       "source": "/frames/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/frames/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/frames/:path*"
     },
     {
       "source": "/icons/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/icons/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/icons/:path*"
     },
     {
       "source": "/logo-ls.png",
-      "destination": "https://clube-das-colecionadoras.vercel.app/logo-ls.png"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/logo-ls.png"
     },
     {
       "source": "/logo_text.png",
-      "destination": "https://clube-das-colecionadoras.vercel.app/logo_text.png"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/logo_text.png"
     },
     {
       "source": "/verso-card.png",
-      "destination": "https://clube-das-colecionadoras.vercel.app/verso-card.png"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/verso-card.png"
     },
     {
       "source": "/verso-card.webp",
-      "destination": "https://clube-das-colecionadoras.vercel.app/verso-card.webp"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/verso-card.webp"
     },
     {
       "source": "/card_pink.png",
-      "destination": "https://clube-das-colecionadoras.vercel.app/card_pink.png"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/card_pink.png"
     },
     {
       "source": "/card_wine.png",
-      "destination": "https://clube-das-colecionadoras.vercel.app/card_wine.png"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/card_wine.png"
     },
     {
       "source": "/clubedascolecionadoras/assets/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/assets/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/assets/:path*"
     },
     {
       "source": "/clubedascolecionadoras",
-      "destination": "https://clube-das-colecionadoras.vercel.app/clubedascolecionadoras"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/clubedascolecionadoras"
     },
     {
       "source": "/clubedascolecionadoras/:path*",
-      "destination": "https://clube-das-colecionadoras.vercel.app/clubedascolecionadoras/:path*"
+      "destination": "https://clube-das-colecionadoras2.vercel.app/clubedascolecionadoras/:path*"
     },
     {
       "source": "/lista120livrossaficos",
