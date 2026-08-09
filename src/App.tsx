@@ -76,7 +76,6 @@ function App() {
 
         <div className="promotions">
           <section className="club" aria-label="Clube das Colecionadoras">
-            <div className="aurora" />
             <article className="club-card">
               <div className="card-kicker">
                 <span className="heart">♥</span> Clube das Colecionadoras
@@ -98,7 +97,6 @@ function App() {
           </section>
 
           <section className="bienal" aria-label="Mapa Sáfico da Bienal do Livro de São Paulo 2026">
-            <div className="aurora" />
             <article className="club-card">
               <div className="card-kicker"><span className="heart">✦</span> Bienal do Livro São Paulo · 2026</div>
               <h2>Seu roteiro sáfico<br />na <i>Bienal.</i></h2>
