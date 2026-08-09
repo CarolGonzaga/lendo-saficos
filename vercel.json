@@ -57,6 +57,42 @@
       "destination": "https://clube-das-colecionadoras2.vercel.app/api/:path*"
     },
     {
+      "source": "/logo-icon.png",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/logo-icon.png"
+    },
+    {
+      "source": "/logo-texto.png",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/logo-texto.png"
+    },
+    {
+      "source": "/logo-completo.png",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/logo-completo.png"
+    },
+    {
+      "source": "/mapa/:path*",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/mapa/:path*"
+    },
+    {
+      "source": "/expositores/:path*",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/expositores/:path*"
+    },
+    {
+      "source": "/mapasaficobienal/assets/:path*",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/assets/:path*"
+    },
+    {
+      "source": "/mapasaficobienal/sw.js",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/sw.js"
+    },
+    {
+      "source": "/mapasaficobienal",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/"
+    },
+    {
+      "source": "/mapasaficobienal/:path*",
+      "destination": "https://bienal-ls-2026-nine.vercel.app/:path*"
+    },
+    {
       "source": "/assets/:path*",
       "destination": "https://clube-das-colecionadoras2.vercel.app/assets/:path*"
     },

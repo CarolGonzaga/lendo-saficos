@@ -74,27 +74,43 @@ function App() {
           </footer>
         </section>
 
-        <section className="club" aria-label="Clube das Colecionadoras">
-          <div className="aurora" />
-          <article className="club-card">
-            <div className="card-kicker">
-              <span className="heart">♥</span> Clube das Colecionadoras
-            </div>
-            <h2>
-              O Clube das<br />
-              Colecionadoras chegou<br />
-              ao <i>Lendo Sáficos.</i>
-            </h2>
-            <p>
-              Um álbum virtual feito para quem ama literatura sáfica.
-              <br />
-              Responda quizzes, colecione figurinhas e desbloqueie recompensas exclusivas.
-            </p>
-            <a className="club-button" href="/clubedascolecionadoras" aria-label="Entrar no Clube das Colecionadoras">
-              Entrar no Clube <span>→</span>
-            </a>
-          </article>
-        </section>
+        <div className="promotions">
+          <section className="club" aria-label="Clube das Colecionadoras">
+            <div className="aurora" />
+            <article className="club-card">
+              <div className="card-kicker">
+                <span className="heart">♥</span> Clube das Colecionadoras
+              </div>
+              <h2>
+                O Clube das<br />
+                Colecionadoras chegou<br />
+                ao <i>Lendo Sáficos.</i>
+              </h2>
+              <p>
+                Um álbum virtual feito para quem ama literatura sáfica.
+                <br />
+                Responda quizzes, colecione figurinhas e desbloqueie recompensas exclusivas.
+              </p>
+              <a className="club-button" href="/clubedascolecionadoras" aria-label="Entrar no Clube das Colecionadoras">
+                Entrar no Clube <span>→</span>
+              </a>
+            </article>
+          </section>
+
+          <section className="bienal" aria-label="Mapa Sáfico da Bienal do Livro de São Paulo 2026">
+            <div className="map-grid" aria-hidden="true" />
+            <span className="map-pin pin-one" aria-hidden="true">●</span>
+            <span className="map-pin pin-two" aria-hidden="true">●</span>
+            <article className="club-card bienal-card">
+              <div className="card-kicker"><span className="heart">✦</span> Bienal do Livro São Paulo · 2026</div>
+              <h2>Seu roteiro sáfico<br />na <i>Bienal.</i></h2>
+              <p>Explore o Mapa Sáfico e encontre editoras, autoras e histórias para celebrar na Bienal do Livro de São Paulo.</p>
+              <a className="club-button bienal-button" href="/mapasaficobienal/login" aria-label="Abrir o Mapa Sáfico da Bienal">
+                Abrir Mapa Sáfico <span>→</span>
+              </a>
+            </article>
+          </section>
+        </div>
       </main>
 
       <footer className="site-footer">
