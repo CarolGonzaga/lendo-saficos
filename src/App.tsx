@@ -98,14 +98,12 @@ function App() {
           </section>
 
           <section className="bienal" aria-label="Mapa Sáfico da Bienal do Livro de São Paulo 2026">
-            <div className="map-grid" aria-hidden="true" />
-            <span className="map-pin pin-one" aria-hidden="true">●</span>
-            <span className="map-pin pin-two" aria-hidden="true">●</span>
-            <article className="club-card bienal-card">
+            <div className="aurora" />
+            <article className="club-card">
               <div className="card-kicker"><span className="heart">✦</span> Bienal do Livro São Paulo · 2026</div>
               <h2>Seu roteiro sáfico<br />na <i>Bienal.</i></h2>
               <p>Explore o Mapa Sáfico e encontre editoras, autoras e histórias para celebrar na Bienal do Livro de São Paulo.</p>
-              <a className="club-button bienal-button" href="/mapasaficobienal/login" aria-label="Abrir o Mapa Sáfico da Bienal">
+              <a className="club-button" href="/mapasaficobienal/login" aria-label="Abrir o Mapa Sáfico da Bienal">
                 Abrir Mapa Sáfico <span>→</span>
               </a>
             </article>
