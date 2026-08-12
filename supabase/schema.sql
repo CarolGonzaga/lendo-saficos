@@ -42,6 +42,12 @@ drop policy if exists "admins manage articles" on public.blog_articles;
 create policy "admins manage articles" on public.blog_articles
 for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
+-- Política explícita para exclusão: útil também em projetos já criados
+-- antes da política abrangente acima.
+drop policy if exists "admins delete articles" on public.blog_articles;
+create policy "admins delete articles" on public.blog_articles
+for delete to authenticated using (public.is_admin());
+
 drop policy if exists "admins view their role" on public.admin_users;
 create policy "admins view their role" on public.admin_users
 for select to authenticated using (user_id = auth.uid());

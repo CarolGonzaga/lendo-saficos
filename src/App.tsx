@@ -4,7 +4,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 
 type ArticleStatus = "Publicado" | "Rascunho" | "Suspenso";
-type ContentAlign = "left" | "center" | "right";
+type ContentAlign = "left" | "center" | "right" | "justify";
 type ListItem = { title: string; url: string };
 type ArticleBlock = {
   id: string;
@@ -459,16 +459,12 @@ function Home({ articles }: { articles: Article[] }) {
       <main>
         <section className="hero wrap">
           <div className="hero-copy">
-            <p className="eyebrow">Uma nova história começa aqui</p>
-            <h1>
-              Novidades
-              <br />
-              <em>em breve</em>
-            </h1>
+            <p className="eyebrow">Uma nova história começa aqui → Lendo Sáficos</p>
+            <h1>O fandom da<br />literatura sáfica</h1>
             <p className="description">
-              Em breve, uma plataforma para ficar por dentro de tudo que
-              acontece no universo da literatura sáfica e acompanhar as
-              novidades compartilhadas pelo Lendo Sáficos.
+              Plataforma oficial do Lendo Sáficos, criada para reunir
+              projetos, ideias e divulgações de livros sáficos nacionais e
+              internacionais.
             </p>
             <Socials />
           </div>
@@ -1013,8 +1009,21 @@ function Admin({
   };
   const removeArticle = async (article: Article) => {
     if (!supabase || !window.confirm(`Excluir “${article.title}”? Esta ação não pode ser desfeita.`)) return;
-    const { error } = await supabase.from("blog_articles").delete().eq("id", article.id);
-    if (error) setMessage(error.message); else { setMessage("Matéria excluída."); await refresh(true); }
+    const { data, error } = await supabase
+      .from("blog_articles")
+      .delete()
+      .eq("id", article.id)
+      .select("id");
+    if (error) {
+      setMessage(`Não foi possível excluir: ${error.message}`);
+      return;
+    }
+    if (!data?.length) {
+      setMessage("Nenhuma matéria foi excluída. Execute a política de exclusão no Supabase e confirme que sua conta está em admin_users.");
+      return;
+    }
+    setMessage("Matéria excluída.");
+    await refresh(true);
   };
   return (
     <>
@@ -1213,6 +1222,7 @@ function Admin({
                       <option value="left">Esquerda</option>
                       <option value="center">Centro</option>
                       <option value="right">Direita</option>
+                      <option value="justify">Justificado</option>
                     </select>
                   </label>
                   <button type="button" onClick={() => removeBlock(block.id)}>
