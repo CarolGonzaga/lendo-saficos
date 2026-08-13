@@ -690,6 +690,14 @@ function Blog({ articles }: { articles: Article[] }) {
           <p className="article-lead">{selected.excerpt}</p>
           <img className="article-cover" src={selected.image} alt="" />
           <ArticleBlocks blocks={selected.blocks} />
+          <nav className="article-navigation" aria-label="Navegação entre matérias">
+            <a className="text-link" href="/blog">← Voltar para todas as notícias</a>
+            <span>Continue explorando o Lendo Sáficos</span>
+          </nav>
+          <section className="related-articles" aria-labelledby="related-title">
+            <h2 id="related-title">Você também pode gostar</h2>
+            <div>{published.filter(article => article.id !== selected.id).slice(0, 3).map(article => <a href={articleHref(article)} key={article.id}><img src={article.image} alt="" /><span><small>{article.category}</small><b>{article.title}</b><em>Ler matéria →</em></span></a>)}</div>
+          </section>
         </main>
         <Footer />
       </>
