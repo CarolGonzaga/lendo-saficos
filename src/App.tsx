@@ -1009,17 +1009,11 @@ function Admin({
   };
   const removeArticle = async (article: Article) => {
     if (!supabase || !window.confirm(`Excluir “${article.title}”? Esta ação não pode ser desfeita.`)) return;
-    const { data, error } = await supabase
-      .from("blog_articles")
-      .delete()
-      .eq("id", article.id)
-      .select("id");
+    const { error } = await supabase.rpc("delete_blog_article", {
+      article_id: article.id,
+    });
     if (error) {
       setMessage(`Não foi possível excluir: ${error.message}`);
-      return;
-    }
-    if (!data?.length) {
-      setMessage("Nenhuma matéria foi excluída. Execute a política de exclusão no Supabase e confirme que sua conta está em admin_users.");
       return;
     }
     setMessage("Matéria excluída.");

@@ -48,6 +48,23 @@ drop policy if exists "admins delete articles" on public.blog_articles;
 create policy "admins delete articles" on public.blog_articles
 for delete to authenticated using (public.is_admin());
 
+-- Exclusão via RPC evita inconsistências de cache de políticas no cliente.
+create or replace function public.delete_blog_article(article_id bigint)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Sem permissão para excluir matérias';
+  end if;
+  delete from public.blog_articles where id = article_id;
+end;
+$$;
+
+grant execute on function public.delete_blog_article(bigint) to authenticated;
+
 drop policy if exists "admins view their role" on public.admin_users;
 create policy "admins view their role" on public.admin_users
 for select to authenticated using (user_id = auth.uid());
