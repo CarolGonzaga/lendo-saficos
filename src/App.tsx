@@ -752,7 +752,8 @@ function Blog({ articles }: { articles: Article[] }) {
         </section>
         <section className="blog-grid">
           {filtered.map((article, index) => (
-            <article
+            <a
+              href={articleHref(article)}
               className={
                 index === 0 ? "blog-card blog-card-featured" : "blog-card"
               }
@@ -760,20 +761,17 @@ function Blog({ articles }: { articles: Article[] }) {
             >
               <img src={article.image} alt="" />
               <div>
-                <CategoryTag
-                  category={article.category}
-                  onClick={() => chooseCategory(article.category)}
-                />
+                <span className="category-tag">{article.category}</span>
                 <h2>{article.title}</h2>
                 <p>{article.excerpt}</p>
                 <button
                   className="read-link"
-                  onClick={() => { window.history.pushState({}, "", articleHref(article)); setSelected(article); }}
+                  tabIndex={-1}
                 >
                   Ler matéria <Arrow />
                 </button>
               </div>
-            </article>
+            </a>
           ))}
         </section>
         {filtered.length === 0 && (
