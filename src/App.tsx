@@ -468,7 +468,8 @@ function Home({ articles }: { articles: Article[] }) {
             <h1>O fandom da<br /><em>literatura sáfica</em></h1>
             <p className="description">
               Plataforma oficial do Lendo Sáficos, criada para reunir
-              projetos, ideias e divulgações de livros sáficos nacionais e
+              projetos, ideias e divulgações de livros, romances e leituras
+              sáficas, lésbicas, bissexuais, pansexuais e queer, nacionais e
               internacionais.
             </p>
             <Socials />
