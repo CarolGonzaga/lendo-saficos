@@ -68,6 +68,10 @@
 .product-card{align-items:stretch}.product-card>div{display:flex;min-height:145px;flex-direction:column;align-items:flex-start}.product-card h3{margin-top:2px}.product-card p{margin-bottom:12px!important}.product-card .button{margin-top:auto}
 @media(max-width:800px){.product-card>div{min-height:125px}}
 
+/* Respiro após notícias; rodapé continua compacto. */
+.news{margin-bottom:50px}.site-footer{min-height:54px;padding-block:9px}
+@media(max-width:700px){.news{margin-bottom:32px}.site-footer{padding-block:11px}}
+
 /* Regra final: nenhuma máscara nas extremidades e profundidade nas capas. */
 .covers-viewport{mask-image:none!important;-webkit-mask-image:none!important;filter:none!important;overflow:hidden}
 .covers-track.covers-count-5 .cover-slot .cover-orbit{box-shadow:0 18px 28px rgba(86,19,47,.2),0 5px 10px rgba(86,19,47,.18),inset 0 0 0 1px rgba(255,255,255,.28)}

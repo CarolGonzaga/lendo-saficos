@@ -464,8 +464,8 @@ function Home({ articles }: { articles: Article[] }) {
       <main>
         <section className="hero wrap">
           <div className="hero-copy">
-            <p className="eyebrow">Uma nova história começa aqui → Lendo Sáficos</p>
-            <h1>O fandom da<br />literatura sáfica</h1>
+            <p className="eyebrow">Lendo Sáficos</p>
+            <h1>O fandom da<br /><em>literatura sáfica</em></h1>
             <p className="description">
               Plataforma oficial do Lendo Sáficos, criada para reunir
               projetos, ideias e divulgações de livros sáficos nacionais e
