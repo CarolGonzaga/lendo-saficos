@@ -1048,9 +1048,11 @@ function Admin({
   };
   const removeArticle = async (article: Article) => {
     if (!supabase || !window.confirm(`Excluir “${article.title}”? Esta ação não pode ser desfeita.`)) return;
-    const { error } = await supabase.rpc("delete_blog_article", {
-      article_id: article.id,
-    });
+    setMessage("Excluindo matéria…");
+    const { error } = await supabase
+      .from("blog_articles")
+      .delete()
+      .eq("id", article.id);
     if (error) {
       setMessage(`Não foi possível excluir: ${error.message}`);
       return;
@@ -1318,7 +1320,7 @@ function Admin({
                   </button>
                   {article.status !== "Publicado" && <button onClick={() => void publish(article)}>Publicar</button>}
                   {article.status === "Publicado" && <button onClick={() => toggleStatus(article)}>Suspender</button>}
-                  <button className="delete-action" onClick={() => void removeArticle(article)}>Excluir</button>
+                  <button type="button" className="delete-action" onClick={() => void removeArticle(article)}>Excluir</button>
                 </div>
               </article>
             ))}
@@ -1374,6 +1376,16 @@ function App() {
   useEffect(() => {
     if (isAdmin) void refresh(true);
   }, [isAdmin]);
+  useEffect(() => {
+    // O site principal não usa PWA. Remove somente um SW antigo da raiz,
+    // que pode interceptar requisições do painel com cache incompatível.
+    if (!("serviceWorker" in navigator)) return;
+    void navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations
+        .filter((registration) => registration.scope === `${window.location.origin}/`)
+        .forEach((registration) => void registration.unregister());
+    });
+  }, []);
   const login = async (email: string, password: string) => {
     if (!supabase) return "Supabase não está configurado.";
     const { data, error } = await supabase.auth.signInWithPassword({
