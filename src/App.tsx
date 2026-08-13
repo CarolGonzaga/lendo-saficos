@@ -673,6 +673,13 @@ function Blog({ articles }: { articles: Article[] }) {
     setCategory(next);
     setSearch("");
   };
+  const openArticle = (event: React.MouseEvent<HTMLAnchorElement>, article: Article) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    window.history.pushState({}, "", articleHref(article));
+    setSelected(article);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   if (selected)
     return (
       <>
@@ -696,7 +703,7 @@ function Blog({ articles }: { articles: Article[] }) {
           </nav>
           <section className="related-articles" aria-labelledby="related-title">
             <h2 id="related-title">Você também pode gostar</h2>
-            <div>{published.filter(article => article.id !== selected.id).slice(0, 3).map(article => <a href={articleHref(article)} key={article.id}><img src={article.image} alt="" /><span><small>{article.category}</small><b>{article.title}</b><em>Ler matéria →</em></span></a>)}</div>
+            <div>{published.filter(article => article.id !== selected.id).slice(0, 3).map(article => <a href={articleHref(article)} onClick={(event) => openArticle(event, article)} key={article.id}><img src={article.image} alt="" /><span><small>{article.category}</small><b>{article.title}</b><em>Ler matéria →</em></span></a>)}</div>
           </section>
         </main>
         <Footer />
@@ -765,6 +772,7 @@ function Blog({ articles }: { articles: Article[] }) {
               className={
                 index === 0 ? "blog-card blog-card-featured" : "blog-card"
               }
+              onClick={(event) => openArticle(event, article)}
               key={article.id}
             >
               <img src={article.image} alt="" />
