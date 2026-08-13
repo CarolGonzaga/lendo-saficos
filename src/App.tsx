@@ -27,6 +27,7 @@ type Article = {
   status: ArticleStatus;
   featured?: boolean;
   blocks?: ArticleBlock[];
+  slug?: string;
 };
 const defaultCategories = ["Destaque", "Listas", "Tropes", "Novidades"];
 const kindleTemplate: ArticleBlock[] = [
@@ -105,6 +106,10 @@ const kindleTemplate: ArticleBlock[] = [
   },
 ];
 type SocialLinkProps = { href: string; label: string; children: ReactNode };
+
+function slugify(value: string) { return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""); }
+function articleSlug(article: Article) { return article.slug || `${slugify(article.title)}-${article.id}`; }
+function articleHref(article: Article) { return `/blog/${articleSlug(article)}`; }
 
 function sanitizeRichText(value = "") {
   const allowed = new Set(["B", "STRONG", "I", "EM", "SPAN", "FONT", "BR"]);
@@ -423,7 +428,7 @@ function News({ articles }: { articles: Article[] }) {
           Ver todas as matérias <Arrow />
         </a>
       </div>
-      <a className="news-feature" href="/blog">
+      <a className="news-feature" href={articleHref(featured)}>
         <img src={featured.image} alt="" />
         <div>
           <p className="eyebrow">{featured.category}</p>
@@ -436,7 +441,7 @@ function News({ articles }: { articles: Article[] }) {
       </a>
       <div className="news-list">
         {others.slice(0, 2).map((article) => (
-          <a className="news-small" href="/blog" key={article.id}>
+          <a className="news-small" href={articleHref(article)} key={article.id}>
             <div>
               <p className="eyebrow">{article.category}</p>
               <h3>{article.title}</h3>
@@ -619,6 +624,21 @@ function CategoryTag({
   );
 }
 
+function ArticleMetadata({ article }: { article: Article }) {
+  useEffect(() => {
+    const url = `https://www.lendosaficos.com.br${articleHref(article)}`;
+    const title = `${article.title} | Lendo Sáficos`;
+    document.title = title;
+    document.querySelector('link[rel="canonical"]')?.setAttribute("href", url);
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", article.excerpt);
+    document.querySelector('meta[property="og:url"]')?.setAttribute("content", url);
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", title);
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", article.excerpt);
+  }, [article]);
+  return null;
+}
+
 function Blog({ articles }: { articles: Article[] }) {
   const published = articles.filter(
     (article) => article.status === "Publicado",
@@ -629,7 +649,8 @@ function Blog({ articles }: { articles: Article[] }) {
       ...published.map((article) => article.category),
     ]),
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-  const [selected, setSelected] = useState<Article | null>(null);
+  const requestedSlug = window.location.pathname.split("/").filter(Boolean)[1];
+  const [selected, setSelected] = useState<Article | null>(() => requestedSlug ? published.find(article => articleSlug(article) === requestedSlug) ?? null : null);
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
   const filtered = useMemo(
@@ -647,6 +668,7 @@ function Blog({ articles }: { articles: Article[] }) {
     [published, category, search],
   );
   const chooseCategory = (next: string) => {
+    window.history.pushState({}, "", "/blog");
     setSelected(null);
     setCategory(next);
     setSearch("");
@@ -655,8 +677,9 @@ function Blog({ articles }: { articles: Article[] }) {
     return (
       <>
         <Header />
+        <ArticleMetadata article={selected} />
         <main className="article-page wrap">
-          <button className="back-link" onClick={() => setSelected(null)}>
+          <button className="back-link" onClick={() => { window.history.pushState({}, "", "/blog"); setSelected(null); }}>
             ← Voltar para notícias
           </button>
           <CategoryTag
@@ -745,7 +768,7 @@ function Blog({ articles }: { articles: Article[] }) {
                 <p>{article.excerpt}</p>
                 <button
                   className="read-link"
-                  onClick={() => setSelected(article)}
+                  onClick={() => { window.history.pushState({}, "", articleHref(article)); setSelected(article); }}
                 >
                   Ler matéria <Arrow />
                 </button>
@@ -936,14 +959,16 @@ function Admin({
           sensitivity: "accent",
         }) === 0,
     );
+    const title = String(data.get("title"));
     return {
       category: existing || normalizedCategory,
-      title: String(data.get("title")),
+      title,
       excerpt: String(data.get("excerpt")),
       image,
       blocks,
       status: data.get("status") as ArticleStatus,
       featured: editing?.featured ?? articles.length === 0,
+      slug: editing?.slug || slugify(title),
     };
   };
   const save = async (event: FormEvent<HTMLFormElement>) => {

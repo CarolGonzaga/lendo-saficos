@@ -5,6 +5,7 @@ create table if not exists public.blog_articles (
   title text not null,
   excerpt text not null,
   image text not null default '/images/1.jpg',
+  slug text,
   blocks jsonb not null default '[]'::jsonb,
   status text not null default 'Rascunho' check (status in ('Publicado', 'Rascunho', 'Suspenso')),
   featured boolean not null default false,
@@ -15,6 +16,13 @@ create table if not exists public.blog_articles (
 -- Migração segura para instalações que já tinham a tabela antes do CMS por blocos.
 alter table public.blog_articles
   add column if not exists blocks jsonb not null default '[]'::jsonb;
+
+alter table public.blog_articles
+  add column if not exists slug text;
+
+create unique index if not exists blog_articles_slug_unique
+on public.blog_articles (slug)
+where slug is not null;
 
 create table if not exists public.admin_users (
   user_id uuid primary key references auth.users(id) on delete cascade,
