@@ -115,6 +115,16 @@ body{background:#fff;color:var(--ink)}
 .books-strip{border-color:#efc3d7;background:linear-gradient(100deg,#fff8fb,#fff)}.books-number{color:var(--pink)}.text-link{border-color:#ec9fc2}.text-link span{background:var(--pink)}
 .club-feature{background:linear-gradient(118deg,#bd3b85 0%,#d23c70 56%,#f58abe 100%)}.map-feature{background:linear-gradient(118deg,#c95fa9 0%,#bd3b85 55%,#d23c70 100%)}.club-feature .eyebrow,.map-feature .eyebrow{color:#ffe2ef}.club-feature h2,.map-feature h2{color:#fff}.club-feature p:not(.eyebrow),.map-feature p:not(.eyebrow){color:#fff5fa}
 .news-heading,.news-feature,.news-small,.blog-card{background:#fff7fa}.news p:not(.eyebrow),.blog-card p:not(.eyebrow){color:#754b60}.community{display:none}
+
+/* Cards inteiros são links, sem herdar o visual padrão de hyperlink. */
+.blog-card{color:#55203c;text-decoration:none}
+.blog-card:visited{color:#55203c}
+.blog-card .category-tag{display:inline-block;text-decoration:none}
+.blog-card h2{color:#55203c;text-decoration:none;line-height:1.12}
+.blog-card p{color:#754b60!important;text-decoration:none}
+.blog-card .read-link{display:inline-flex;align-items:center;gap:5px;color:var(--pink);font:700 10px 'DM Sans',sans-serif;text-decoration:none}
+.blog-card .read-link svg{width:14px;height:14px}
+.blog-card:hover h2{color:#77244b}
 .site-footer{min-height:62px;padding:12px 0;gap:14px;font-size:9px}.site-footer img{width:46px}.site-footer span{line-height:1.25}
 
 /* Cinco capas permanecem em cena; uma por vez dá lugar à próxima após a pausa. */

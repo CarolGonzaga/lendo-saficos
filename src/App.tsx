@@ -772,12 +772,11 @@ function Blog({ articles }: { articles: Article[] }) {
                 <span className="category-tag">{article.category}</span>
                 <h2>{article.title}</h2>
                 <p>{article.excerpt}</p>
-                <button
+                <span
                   className="read-link"
-                  tabIndex={-1}
                 >
                   Ler matéria <Arrow />
-                </button>
+                </span>
               </div>
             </a>
           ))}
