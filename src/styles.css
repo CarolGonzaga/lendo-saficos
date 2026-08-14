@@ -140,8 +140,7 @@ body{background:#fff;color:var(--ink)}
 .covers-track.covers-count-5{align-items:flex-end}
 .covers-track.covers-count-5 .cover-slot{width:clamp(86px,8.5vw,120px);height:clamp(144px,13.6vw,190px);flex:0 0 auto;transform-origin:50% 100%;will-change:transform;animation:slot-float-one 5.6s ease-in-out infinite alternate}
 .covers-track.covers-count-5 .cover-slot-2{animation-name:slot-float-two;animation-duration:6.7s}.covers-track.covers-count-5 .cover-slot-3{animation-name:slot-float-three;animation-duration:5s}.covers-track.covers-count-5 .cover-slot-4{animation-name:slot-float-four;animation-duration:7.3s}.covers-track.covers-count-5 .cover-slot-5{animation-name:slot-float-five;animation-duration:6.1s}
-.covers-track.covers-count-5 .cover-slot .cover-orbit{display:block;width:100%;height:100%;object-fit:cover;border-radius:9px 9px 0 0;box-shadow:0 12px 23px #5321372d;animation:cover-crossfade .58s cubic-bezier(.2,.85,.22,1) both}
-@keyframes cover-crossfade{from{opacity:0;transform:translateY(18px) scale(.965)}to{opacity:1;transform:translateY(0) scale(1)}}
+.covers-track.covers-count-5 .cover-slot .cover-orbit{display:block;width:100%;height:100%;object-fit:cover;border-radius:9px 9px 0 0;box-shadow:0 12px 23px #5321372d}
 @keyframes slot-float-one{from{transform:translateY(2px) rotate(-.25deg)}to{transform:translateY(-9px) rotate(.35deg)}}@keyframes slot-float-two{from{transform:translateY(-6px) rotate(.3deg)}to{transform:translateY(2px) rotate(-.2deg)}}@keyframes slot-float-three{from{transform:translateY(1px) rotate(-.2deg)}to{transform:translateY(-7px) rotate(.3deg)}}@keyframes slot-float-four{from{transform:translateY(-8px) rotate(.2deg)}to{transform:translateY(1px) rotate(-.25deg)}}@keyframes slot-float-five{from{transform:translateY(-2px) rotate(-.2deg)}to{transform:translateY(-10px) rotate(.25deg)}}
 @media(max-width:700px){.covers-track.covers-count-5 .cover-slot{width:clamp(48px,16vw,75px);height:132px}}
 @media(prefers-reduced-motion:reduce){.covers-track.covers-count-5 .cover-slot,.covers-track.covers-count-5 .cover-slot .cover-orbit{animation:none!important;transform:none!important}}
@@ -175,8 +174,17 @@ body{background:#fff;color:var(--ink)}
 /* Mantém esta composição como regra final sobre os estilos legados da faixa. */
 .covers-viewport{position:relative;overflow:hidden;mask-image:linear-gradient(to right,transparent,#000 3%,#000 97%,transparent)}
 .covers-track{display:flex;align-items:flex-end;justify-content:center;width:100%;height:100%;gap:clamp(12px,2.1vw,36px);animation:cover-stage-in .8s cubic-bezier(.18,.8,.25,1) both}
-.covers-track img.cover-orbit{width:clamp(82px,8.1vw,116px);height:clamp(138px,13.2vw,185px);object-fit:cover;flex:0 0 auto;border-radius:9px 9px 0 0;box-shadow:0 12px 23px #5321372d;transform-origin:50% 100%;will-change:transform,opacity;animation:cover-arrive .7s cubic-bezier(.15,.85,.22,1) var(--cover-delay) both,orbit-one 5.4s ease-in-out calc(var(--cover-delay) + .55s) infinite alternate}
+.covers-track img.cover-orbit{width:100%;height:100%;object-fit:cover;flex:0 0 auto;border-radius:9px 9px 0 0;box-shadow:0 12px 23px #5321372d;transform-origin:50% 100%;will-change:transform,opacity;display:block}
 .covers-count-3{gap:clamp(32px,5vw,78px)}.covers-count-3 img.cover-orbit{width:clamp(96px,10.5vw,132px)}.covers-count-4{gap:clamp(23px,3.6vw,56px)}.covers-count-5{gap:clamp(16px,2.4vw,40px)}.covers-count-6{gap:clamp(10px,1.45vw,24px)}
-.covers-track img.cover-orbit-1{animation-name:cover-arrive,orbit-two;animation-duration:.7s,4.2s}.covers-track img.cover-orbit-2{animation-name:cover-arrive,orbit-three;animation-duration:.7s,6.6s}.covers-track img.cover-orbit-3{animation-name:cover-arrive,orbit-four;animation-duration:.7s,3.8s}.covers-track img.cover-orbit-4{animation-name:cover-arrive,orbit-five;animation-duration:.7s,5.9s}.covers-track img.cover-orbit-5{animation-name:cover-arrive,orbit-six;animation-duration:.7s,4.7s}
-@media(max-width:700px){.covers-viewport{overflow:hidden}.covers-track{gap:12px}.covers-track img.cover-orbit{height:132px;width:clamp(52px,17vw,80px)}.covers-count-3{gap:clamp(22px,8vw,48px)}.covers-count-3 img.cover-orbit{width:clamp(72px,21vw,96px)}.covers-count-4{gap:clamp(14px,4vw,25px)}.covers-count-5,.covers-count-6{gap:9px}.covers-count-6 img.cover-orbit{width:clamp(45px,14.8vw,65px)}}
-@media(prefers-reduced-motion:reduce){.covers-track,.covers-track img.cover-orbit{animation:none!important;transform:none!important;opacity:1}}
+
+/* Efeito de virada de carta (3D card flip) */
+.cover-slot{perspective:1000px}
+.cover-card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .72s cubic-bezier(.34,1.4,.64,1)}
+.cover-card-inner.is-flipped{transform:rotateY(180deg)}
+.cover-card-face{position:absolute;inset:0;width:100%;height:100%;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:9px 9px 0 0;overflow:hidden}
+.cover-card-front{transform:rotateY(0deg)}
+.cover-card-back{transform:rotateY(180deg)}
+
+@media(max-width:700px){.covers-viewport{overflow:hidden}.covers-track{gap:12px}.covers-count-3{gap:clamp(22px,8vw,48px)}.covers-count-3 img.cover-orbit{width:clamp(72px,21vw,96px)}.covers-count-4{gap:clamp(14px,4vw,25px)}.covers-count-5,.covers-count-6{gap:9px}}
+@media(prefers-reduced-motion:reduce){.covers-track,.covers-track img.cover-orbit,.cover-card-inner{animation:none!important;transition:none!important;transform:none!important;opacity:1}}
+

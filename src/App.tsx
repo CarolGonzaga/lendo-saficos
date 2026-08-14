@@ -352,10 +352,11 @@ function BooksStrip() {
   const [replacingSlot, setReplacingSlot] = useState(-1);
 
   useEffect(() => {
-    const delay = replacingSlot === -1 ? 3000 : 620;
+    const delay = replacingSlot === -1 ? 3000 : 680;
     const timer = window.setTimeout(() => {
-      if (replacingSlot < 4) setReplacingSlot((slot) => slot + 1);
-      else {
+      if (replacingSlot < 4) {
+        setReplacingSlot((slot) => slot + 1);
+      } else {
         setRound((current) => current + 1);
         setReplacingSlot(-1);
       }
@@ -388,19 +389,38 @@ function BooksStrip() {
         >
           <div className="covers-track covers-count-5">
             {Array.from({ length: 5 }, (_, position) => {
-              const isReplaced = position <= replacingSlot;
-              const src = coverAt(round + (isReplaced ? 1 : 0), position);
+              const flipCount = round + (position <= replacingSlot ? 1 : 0);
+              const isFlipped = flipCount % 2 === 1;
+              const frontRound = Math.floor(flipCount / 2) * 2;
+              const backRound = Math.floor((flipCount - 1) / 2) * 2 + 1;
+              const frontSrc = coverAt(frontRound, position);
+              const backSrc = coverAt(backRound >= 0 ? backRound : 1, position);
+
               return (
                 <div
                   className={`cover-slot cover-slot-${position + 1}`}
                   key={position}
                 >
-                  <img
-                    className={`cover-orbit ${position === replacingSlot ? "cover-replacing" : ""}`}
-                    key={src}
-                    src={src}
-                    alt="Capa de livro sáfico"
-                  />
+                  <div
+                    className={`cover-card-inner ${isFlipped ? "is-flipped" : ""}`}
+                  >
+                    <div className="cover-card-face cover-card-front">
+                      <img
+                        className="cover-orbit"
+                        src={frontSrc}
+                        alt="Capa de livro sáfico"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div className="cover-card-face cover-card-back">
+                      <img
+                        className="cover-orbit"
+                        src={backSrc}
+                        alt="Capa de livro sáfico"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
                 </div>
               );
             })}
