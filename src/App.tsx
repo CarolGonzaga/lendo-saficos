@@ -480,6 +480,12 @@ function News({ articles }: { articles: Article[] }) {
 function Home({ articles }: { articles: Article[] }) {
   return (
     <>
+      <SeoMetadata
+        title="Livros Sáficos, Literatura e Lançamentos | Lendo Sáficos"
+        description="Descubra livros sáficos, lançamentos, romances, autoras, recomendações e novidades da literatura sáfica no Lendo Sáficos."
+        path="/"
+      />
+
       <Header />
       <main>
         <section className="hero wrap">
@@ -645,19 +651,129 @@ function CategoryTag({
   );
 }
 
-function ArticleMetadata({ article }: { article: Article }) {
+type SeoMetadataProps = {
+  title: string;
+  description: string;
+  path: string;
+  image?: string;
+  type?: "website" | "article";
+  noindex?: boolean;
+};
+
+function SeoMetadata({
+  title,
+  description,
+  path,
+  image = "/images/5.jpeg",
+  type = "website",
+  noindex = false,
+}: SeoMetadataProps) {
   useEffect(() => {
-    const url = `https://www.lendosaficos.com.br${articleHref(article)}`;
-    const title = `${article.title} | Lendo Sáficos`;
+    const baseUrl = "https://www.lendosaficos.com.br";
+    const url = `${baseUrl}${path}`;
+    const imageUrl = image.startsWith("http")
+      ? image
+      : `${baseUrl}${image}`;
+
     document.title = title;
-    document.querySelector('link[rel="canonical"]')?.setAttribute("href", url);
-    document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
-    document.querySelector('meta[property="og:description"]')?.setAttribute("content", article.excerpt);
-    document.querySelector('meta[property="og:url"]')?.setAttribute("content", url);
-    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", title);
-    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", article.excerpt);
-  }, [article]);
+
+    const setMeta = (
+      selector: string,
+      attribute: string,
+      value: string,
+    ) => {
+      document
+        .querySelector(selector)
+        ?.setAttribute(attribute, value);
+    };
+
+    setMeta(
+      'meta[name="description"]',
+      "content",
+      description,
+    );
+
+    setMeta(
+      'meta[name="robots"]',
+      "content",
+      noindex ? "noindex, nofollow" : "index, follow",
+    );
+
+    setMeta(
+      'meta[property="og:title"]',
+      "content",
+      title,
+    );
+
+    setMeta(
+      'meta[property="og:description"]',
+      "content",
+      description,
+    );
+
+    setMeta(
+      'meta[property="og:url"]',
+      "content",
+      url,
+    );
+
+    setMeta(
+      'meta[property="og:type"]',
+      "content",
+      type,
+    );
+
+    setMeta(
+      'meta[property="og:image"]',
+      "content",
+      imageUrl,
+    );
+
+    setMeta(
+      'meta[name="twitter:title"]',
+      "content",
+      title,
+    );
+
+    setMeta(
+      'meta[name="twitter:description"]',
+      "content",
+      description,
+    );
+
+    let canonical = document.querySelector<HTMLLinkElement>(
+      'link[rel="canonical"]',
+    );
+
+    if (!canonical) {
+      canonical = document.createElement("link");
+      canonical.rel = "canonical";
+      document.head.appendChild(canonical);
+    }
+
+    canonical.href = url;
+  }, [
+    title,
+    description,
+    path,
+    image,
+    type,
+    noindex,
+  ]);
+
   return null;
+}
+
+function ArticleMetadata({ article }: { article: Article }) {
+  return (
+    <SeoMetadata
+      title={`${article.title} | Lendo Sáficos`}
+      description={article.excerpt}
+      path={articleHref(article)}
+      image={article.image}
+      type="article"
+    />
+  );
 }
 
 function Blog({ articles }: { articles: Article[] }) {
@@ -704,6 +820,12 @@ function Blog({ articles }: { articles: Article[] }) {
   if (selected)
     return (
       <>
+        <SeoMetadata
+          title="Blog de Literatura Sáfica: Livros, Autoras e Novidades | Lendo Sáficos"
+          description="Notícias, listas, lançamentos, recomendações e matérias sobre livros, autoras e literatura sáfica."
+          path="/blog"
+        />
+
         <Header />
         <ArticleMetadata article={selected} />
         <main className="article-page wrap">
@@ -849,6 +971,13 @@ function AdminLogin({
   };
   return (
     <>
+      <SeoMetadata
+        title="Painel Administrativo | Lendo Sáficos"
+        description="Área administrativa do Lendo Sáficos."
+        path="/admin"
+        noindex
+      />
+
       <Header />
       <main className="login-page">
         <form className="login-card" onSubmit={login}>
@@ -1082,6 +1211,13 @@ function Admin({
   };
   return (
     <>
+      <SeoMetadata
+        title="Painel Administrativo | Lendo Sáficos"
+        description="Área administrativa do Lendo Sáficos."
+        path="/admin"
+        noindex
+      />
+
       <Header />
       {editingList && <ListEditorModal block={editingList} onClose={() => setEditingList(null)} onSave={saveList} />}
       {preview && (
