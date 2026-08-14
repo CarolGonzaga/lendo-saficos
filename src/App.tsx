@@ -286,7 +286,7 @@ function Header() {
         <a href="https://www.lendosaficos.com.br/clubedascolecionadoras">
           Clube das Colecionadoras
         </a>
-        <a href="https://www.lendosaficos.com.br/mapasaficobienal/login">
+        <a href="https://www.lendosaficos.com.br/mapasaficobienal">
           Mapa Sáfico
         </a>
         <a href="/blog">Blog</a>
@@ -531,7 +531,7 @@ function Home({ articles }: { articles: Article[] }) {
               </p>
               <a
                 className="button button-purple"
-                href="https://www.lendosaficos.com.br/mapasaficobienal/login"
+                href="https://www.lendosaficos.com.br/mapasaficobienal"
               >
                 Abrir Mapa Sáfico <Arrow />
               </a>
