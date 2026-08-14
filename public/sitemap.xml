@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
   <url>
-    <loc>https://lendosaficos.com.br/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://www.lendosaficos.com.br/</loc>
   </url>
+
   <url>
-    <loc>https://lendosaficos.com.br/blog</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <loc>https://www.lendosaficos.com.br/blog</loc>
   </url>
+
   <url>
-    <loc>https://lendosaficos.com.br/lista120livrossaficos</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://www.lendosaficos.com.br/lista120livrossaficos</loc>
   </url>
+
   <url>
-    <loc>https://lendosaficos.com.br/clubedascolecionadoras</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://www.lendosaficos.com.br/clubedascolecionadoras</loc>
   </url>
+
   <url>
-    <loc>https://lendosaficos.com.br/mapasaficobienal/login</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://www.lendosaficos.com.br/mapasaficobienal</loc>
   </url>
+
 </urlset>
