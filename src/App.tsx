@@ -786,8 +786,33 @@ function Blog({ articles }: { articles: Article[] }) {
       ...published.map((article) => article.category),
     ]),
   ).sort((a, b) => a.localeCompare(b, "pt-BR"));
-  const requestedSlug = window.location.pathname.split("/").filter(Boolean)[1];
-  const [selected, setSelected] = useState<Article | null>(() => requestedSlug ? published.find(article => articleSlug(article) === requestedSlug) ?? null : null);
+  const requestedSlug =
+    window.location.pathname.split("/").filter(Boolean)[1] || null;
+
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(
+    requestedSlug
+  );
+
+  const selected = selectedSlug
+    ? published.find(
+      (article) => articleSlug(article) === selectedSlug
+    ) ?? null
+    : null;
+
+  useEffect(() => {
+    const syncRoute = () => {
+      const slug =
+        window.location.pathname.split("/").filter(Boolean)[1] || null;
+
+      setSelectedSlug(slug);
+    };
+
+    window.addEventListener("popstate", syncRoute);
+
+    return () => {
+      window.removeEventListener("popstate", syncRoute);
+    };
+  }, []);
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
   const filtered = useMemo(
@@ -806,7 +831,7 @@ function Blog({ articles }: { articles: Article[] }) {
   );
   const chooseCategory = (next: string) => {
     window.history.pushState({}, "", "/blog");
-    setSelected(null);
+    setSelectedSlug(null);
     setCategory(next);
     setSearch("");
   };
@@ -814,7 +839,7 @@ function Blog({ articles }: { articles: Article[] }) {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     window.history.pushState({}, "", articleHref(article));
-    setSelected(article);
+    setSelectedSlug(articleSlug(article));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   if (selected)
@@ -829,7 +854,7 @@ function Blog({ articles }: { articles: Article[] }) {
         <Header />
         <ArticleMetadata article={selected} />
         <main className="article-page wrap">
-          <button className="back-link" onClick={() => { window.history.pushState({}, "", "/blog"); setSelected(null); }}>
+          <button className="back-link" onClick={() => { window.history.pushState({}, "", "/blog"); setSelectedSlug(null); }}>
             ← Voltar para notícias
           </button>
           <CategoryTag
