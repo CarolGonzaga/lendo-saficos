@@ -3,10 +3,10 @@ import type { AdminFilters, Article, ArticleDraft, ArticlePage, Category, Media,
 import { articleSlug, draftOf, slugify, validateDraft } from './utils';
 
 function client() { if (!supabase) throw new Error('Supabase não configurado.'); return supabase; }
-export async function getArticles(filters: AdminFilters, includeAll = false): Promise<ArticlePage> {
+export async function getArticles(filters: AdminFilters, includeAll = false, pageSize = 12): Promise<ArticlePage> {
   const { data, error } = await client().rpc('search_blog_articles', { query_text: filters.search, category_filter: filters.category,
     tag_filter: filters.tag, status_filter: filters.status, featured_filter: filters.featured, sort_order: filters.sort,
-    page_number: filters.page, page_size: 12, include_all: includeAll });
+    page_number: filters.page, page_size: pageSize, include_all: includeAll });
   if (error) throw new Error(`Não foi possível carregar matérias: ${error.message}`);
   return data as ArticlePage;
 }
@@ -70,14 +70,34 @@ export async function getTaxonomy(): Promise<{ categories: Category[]; tags: Tag
   if (categories.error || tags.error) throw categories.error || tags.error;
   return { categories: categories.data as Category[], tags: tags.data as Tag[] };
 }
-export async function createCategory(name: string) {
-  const { data, error } = await client().from('blog_categories').insert({ name: name.trim().replace(/\s+/g, ' '), slug: slugify(name) }).select('*').single();
+export async function createCategory(name: string, slug = slugify(name), description = '') {
+  const cleanName = name.trim().replace(/\s+/g, ' ');
+  const cleanSlug = slugify(slug);
+  if (!cleanName || !cleanSlug) throw new Error('Informe um nome e um slug válidos.');
+  if (description.length > 500) throw new Error('A descrição deve ter até 500 caracteres.');
+  const { data, error } = await client().from('blog_categories').insert({ name: cleanName, slug: cleanSlug, description:description.trim() }).select('*').single();
   if (error) throw new Error(error.code === '23505' ? 'Já existe uma categoria equivalente.' : error.message);
   return data as Category;
 }
 export async function renameCategory(id: number, name: string) {
   const { error } = await client().rpc('blog_rename_category', { category_id: id, category_name: name });
   if (error) throw error;
+}
+export async function createTag(name: string): Promise<Tag> {
+  const cleanName = name.trim().replace(/\s+/g, ' ');
+  const slug = slugify(cleanName);
+  if (!cleanName || !slug) throw new Error('Informe um nome de tag válido.');
+  const { data, error } = await client().from('blog_tags').insert({ name: cleanName, slug }).select('name,slug').single();
+  if (error) throw new Error(error.code === '23505' ? 'Já existe uma tag equivalente.' : error.message);
+  return data as Tag;
+}
+export async function deleteCategory(category: Category): Promise<void> {
+  const { error } = await client().rpc('blog_delete_category', { category_id: category.id });
+  if (error) throw new Error(error.message);
+}
+export async function deleteTag(tag: Tag): Promise<void> {
+  const { error } = await client().rpc('blog_delete_tag', { tag_slug: tag.slug });
+  if (error) throw new Error(error.message);
 }
 export async function uploadMedia(file: File): Promise<Media> {
   if (!['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type)) throw new Error('Use JPG, PNG, WebP ou GIF.');

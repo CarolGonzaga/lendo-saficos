@@ -8,16 +8,16 @@ const publicId='00000000-0000-0000-0000-000000000002';
 const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jN1kAAAAASUVORK5CYII=','base64');
 export async function startBlogFixture(port=54321) {
   const pg=new PGlite({extensions:{unaccent}});
-  await pg.exec(`create role anon; create role authenticated; create schema auth; create schema storage; create schema extensions;
-    create table auth.users(id uuid primary key);
+  await pg.exec(`create role anon; create role authenticated; create role service_role bypassrls; create schema auth; create schema storage; create schema extensions;
+    create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}'::jsonb);
     create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
     create table storage.objects(id bigint generated always as identity primary key,bucket_id text,name text,created_at timestamptz default now());
     alter table storage.objects enable row level security;
-    grant usage on schema public,auth,storage,extensions to anon,authenticated;
+    grant usage on schema public,auth,storage,extensions to anon,authenticated,service_role;
     grant select,insert,update,delete on storage.objects to authenticated; grant select on storage.objects to anon;
     grant usage,select on sequence storage.objects_id_seq to authenticated;
-    insert into auth.users values('${ADMIN_ID}'),('${publicId}');`);
+    insert into auth.users(id,email) values('${ADMIN_ID}','admin@example.com'),('${publicId}','reader@example.com');`);
   await pg.exec(await readFile('supabase/schema.sql','utf8'));
   await pg.exec(`grant select on public.blog_articles to anon; grant select,insert,update,delete on public.blog_articles to authenticated;
     grant select on public.admin_users to authenticated; grant usage,select on sequence public.blog_articles_id_seq to authenticated;
@@ -26,6 +26,8 @@ export async function startBlogFixture(port=54321) {
     ('Saúde e romance','Uma matéria antiga','Novidades','Publicado','saude-e-romance',true,'[{"id":"old","type":"text","content":"<b>Conteúdo antigo</b>","span":8,"align":"left"}]'),
     ('Segunda matéria','Resumo da segunda','Listas','Rascunho','segunda-materia',false,'[]');`);
   await pg.exec(await readFile('supabase/migrations/20260928_blog_cms.sql','utf8'));
+  for(const migration of ['20261117_blog_overview_metrics.sql','20261117_folio_admin_settings_team.sql','20261117_folio_taxonomy.sql'])
+    await pg.exec(await readFile(`supabase/migrations/${migration}`,'utf8'));
   const server=createServer(async (request,response) => {
     response.setHeader('Access-Control-Allow-Origin','*'); response.setHeader('Access-Control-Allow-Headers','*'); response.setHeader('Access-Control-Allow-Methods','GET,POST,PATCH,DELETE,OPTIONS');
     if(request.method === 'OPTIONS') {response.end();return;}
@@ -47,13 +49,14 @@ export async function startBlogFixture(port=54321) {
         await tx.exec(`set local role ${userId ? 'authenticated' : 'anon'}; select set_config('request.jwt.claim.sub','${userId}',true);`);
         if(url.pathname.startsWith('/rest/v1/rpc/')) {
           const name=url.pathname.split('/').pop();
-          if(!['search_blog_articles','related_blog_articles','blog_rename_category','blog_media_references','blog_media_usage','get_public_blog_article'].includes(name)) throw new Error('Unknown RPC');
+          if(!['search_blog_articles','related_blog_articles','blog_rename_category','blog_media_references','blog_media_usage','get_public_blog_article','blog_public_settings','blog_dashboard_overview','blog_article_view_counts','blog_delete_category','blog_delete_tag','blog_team_list','blog_team_change_role'].includes(name)) throw new Error('Unknown RPC');
           const keys=Object.keys(json);
           const argumentsSql=keys.map((key,index) => `${key} => $${index+1}`).join(',');
-          const result=await tx.query(name === 'related_blog_articles' || name === 'blog_media_usage'
+          const multi=['related_blog_articles','blog_media_usage','blog_article_view_counts','blog_team_list'];
+          const result=await tx.query(multi.includes(name)
             ? `select to_jsonb(record) result from public.${name}(${argumentsSql}) record`
             : `select public.${name}(${argumentsSql}) result`,Object.values(json));
-          if(name === 'related_blog_articles' || name === 'blog_media_usage') return result.rows.map(row => row.result);
+          if(multi.includes(name)) return result.rows.map(row => row.result);
           return result.rows[0]?.result;
         }
         if(url.pathname.startsWith('/storage/v1/object/list/')) {
@@ -66,7 +69,7 @@ export async function startBlogFixture(port=54321) {
           const name=decodeURIComponent(url.pathname.split('/').slice(5).join('/')); await tx.query('insert into storage.objects(bucket_id,name) values($1,$2)',['blog-media',name]); return {Key:'blog-media/'+name};
         }
         const table=url.pathname.split('/').pop();
-        if(!['blog_articles','admin_users','blog_categories','blog_tags','blog_editor_drafts'].includes(table)) throw new Error('Unknown table');
+        if(!['blog_articles','admin_users','blog_categories','blog_tags','blog_editor_drafts','blog_settings'].includes(table)) throw new Error('Unknown table');
         const params=[]; const where=[];
         for(const [key,value] of url.searchParams) {
           if(['select','order','limit','offset','on_conflict'].includes(key)) continue;

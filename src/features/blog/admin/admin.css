@@ -1,0 +1,22 @@
+.cms-admin-shell{min-height:100vh;background:#fff9fb;color:#55203c}
+.cms-admin-sidebar{position:fixed;inset:0 auto 0 0;width:248px;z-index:20;display:flex;flex-direction:column;border-right:1px solid #efd0df;background:#fff2f7}
+.cms-admin-brand{padding:32px 24px 22px}
+.cms-admin-brand a{color:#55203c;text-decoration:none;font:700 25px/1.1 'Playfair Display',serif}
+.cms-admin-brand a span{color:#b82c69}
+.cms-admin-brand small{display:block;margin-top:10px;color:#9c7185;font:700 10px 'DM Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase}
+.cms-admin-sidebar nav{display:grid;gap:5px;padding:12px}
+.cms-admin-sidebar nav a,.cms-admin-sidebar-footer a{display:flex;gap:13px;align-items:center;border-radius:8px;padding:12px;color:#754b60;text-decoration:none;font:600 13px 'DM Sans',sans-serif}
+.cms-admin-sidebar nav a span{width:20px;text-align:center;font-size:18px}
+.cms-admin-sidebar nav a:hover,.cms-admin-sidebar-footer a:hover{background:#ffe6f0;color:#76204b}
+.cms-admin-sidebar nav a[aria-current=page]{background:#682247;color:#fff}
+.cms-admin-sidebar-footer{display:grid;gap:7px;margin-top:auto;border-top:1px solid #efd0df;padding:15px 12px 24px}
+.cms-admin-sidebar-footer button{justify-self:start;margin-left:10px;border:0;background:transparent;color:#754b60;cursor:pointer;font:600 13px 'DM Sans',sans-serif}
+.cms-admin-content{min-width:0;margin-left:248px}
+.cms-admin-content .cms-admin{max-width:1220px;padding:38px 30px 80px}
+.cms-admin-content .folio-panel.cms-admin{padding:0}
+.cms-admin-mobile-nav{display:none}
+.cms-admin-mobile-top{display:none}
+.cms-post-tabs{display:flex;gap:5px;margin:0 0 15px}
+.cms-post-tabs button{border:0;background:transparent;padding:8px 14px}
+.cms-post-tabs button[aria-pressed=true]{background:#682247;color:#fff}
+@media(max-width:980px){.cms-admin-sidebar{display:none}.cms-admin-content{margin-left:0}.cms-admin-mobile-top{display:flex;justify-content:flex-end;gap:18px;align-items:center;padding:11px 18px;background:#fff2f7}.cms-admin-mobile-top a,.cms-admin-mobile-top button{border:0;background:transparent;color:#754b60;text-decoration:none;font:600 12px 'DM Sans',sans-serif;cursor:pointer}.cms-admin-mobile-nav{display:flex;gap:7px;overflow-x:auto;border-bottom:1px solid #efd0df;background:#fff2f7;padding:10px 15px}.cms-admin-mobile-nav a{flex:none;border-radius:7px;padding:9px 11px;color:#754b60;text-decoration:none;font:600 12px 'DM Sans',sans-serif}.cms-admin-mobile-nav a[aria-current=page]{background:#682247;color:#fff}.cms-admin-content .cms-admin{padding:26px 18px 70px}}

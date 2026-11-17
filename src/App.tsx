@@ -523,11 +523,14 @@ function SeoMetadata({
 
 function AdminLogin({
   onLogin,
+  onReset,
 }: {
   onLogin: (email: string, password: string) => Promise<string | null>;
+  onReset: (email: string) => Promise<string>;
 }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+  const [email, setEmail] = useState("");
   const login = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -560,6 +563,8 @@ function AdminLogin({
             <input
               name="email"
               type="email"
+              value={email}
+              onChange={event => setEmail(event.target.value)}
               autoComplete="email"
               required
               placeholder="seuemail@exemplo.com"
@@ -582,12 +587,29 @@ function AdminLogin({
           >
             {busy ? "Entrando…" : "Entrar"} <Arrow />
           </button>
+          <button type="button" disabled={busy || !email.trim()} onClick={() => { setBusy(true); void onReset(email).then(setMessage).finally(() => setBusy(false)); }}>Criar ou recuperar senha</button>
           {message && <small>{message}</small>}
         </form>
       </main>
       <Footer />
     </>
   );
+}
+function AdminPasswordSetup() {
+  const [password,setPassword] = useState('');
+  const [confirm,setConfirm] = useState('');
+  const [message,setMessage] = useState('');
+  const [busy,setBusy] = useState(false);
+  const save = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (password.length < 8 || password !== confirm) { setMessage('Use pelo menos 8 caracteres e confirme a mesma senha.'); return; }
+    setBusy(true);
+    const { error } = await supabase!.auth.updateUser({ password });
+    setBusy(false);
+    if (error) { setMessage(error.message); return; }
+    window.location.replace('/admin');
+  };
+  return <><SeoMetadata title="Definir senha | Lendo Sáficos" description="Acesso ao painel editorial." path="/admin/accept-invite" noindex /><Header /><main className="login-page"><form className="login-card" onSubmit={event => void save(event)}><img src="/site-assets/lendo-saficos-logo.png" alt="Lendo Sáficos" /><p className="eyebrow">Equipe editorial</p><h1>Definir senha</h1><p>Crie sua senha para acessar o painel nas próximas visitas.</p><label>Nova senha<input type="password" autoComplete="new-password" minLength={8} required value={password} onChange={event => setPassword(event.target.value)} /></label><label>Confirmar senha<input type="password" autoComplete="new-password" minLength={8} required value={confirm} onChange={event => setConfirm(event.target.value)} /></label><button className="button button-primary" disabled={busy}>Salvar senha</button>{message && <small role="alert">{message}</small>}</form></main><Footer /></>;
 }
 function App() {
   const [articles, setArticles] = useState<Article[]>([]);
@@ -656,11 +678,18 @@ function App() {
     setSession(null);
     setIsAdmin(false);
   };
+  const resetPassword = async (email: string) => {
+    if (!supabase) return 'Supabase não está configurado.';
+    const redirectTo='https://www.lendosaficos.com.br/admin/accept-invite';
+    const { error } = await supabase.auth.resetPasswordForEmail(email,{ redirectTo });
+    return error ? 'Não foi possível enviar o link. Tente novamente.' : 'Se o e-mail estiver cadastrado, você receberá um link para definir a senha.';
+  };
+  if (window.location.pathname === '/admin/accept-invite' && session) return <AdminPasswordSetup />;
   if (window.location.pathname.startsWith("/admin"))
     return session && isAdmin ? (
-      <><SeoMetadata title="Painel Administrativo | Lendo Sáficos" description="Área administrativa do blog." path="/admin" noindex /><Suspense fallback={<main className="admin wrap"><p role="status">Carregando painel…</p></main>}><BlogAdminPage header={<Header />} footer={<Footer />} template={kindleTemplate} onLogout={logout} /></Suspense></>
+      <><SeoMetadata title="Painel Administrativo | Lendo Sáficos" description="Área administrativa do blog." path="/admin" noindex /><Suspense fallback={<main className="admin wrap"><p role="status">Carregando painel…</p></main>}><BlogAdminPage template={kindleTemplate} onLogout={logout} /></Suspense></>
     ) : (
-      <AdminLogin onLogin={login} />
+      <AdminLogin onLogin={login} onReset={resetPassword} />
     );
   if (window.location.pathname.startsWith("/blog"))
     return <BlogPage header={<Header />} footer={<Footer />} />;

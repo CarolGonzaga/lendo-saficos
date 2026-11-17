@@ -23,7 +23,7 @@ export type Article = ArticleSeo & {
   scheduled_at?: string | null; deleted_at?: string | null;
 };
 export type ArticleDraft = Omit<Article, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'editorial_status'>;
-export type Category = { id: number; name: string; slug: string; created_at: string };
+export type Category = { id: number; name: string; slug: string; description?: string; created_at: string };
 export type Tag = { name: string; slug: string };
 export type Media = { path: string; url: string; name: string; referenced?: boolean };
 export type AdminFilters = {

@@ -83,6 +83,10 @@
       "destination": "https://clube-das-colecionadoras2.vercel.app/_serverFn/:path*"
     },
     {
+      "source": "/blog-team-invite",
+      "destination": "/api/blog-team-invite"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://clube-das-colecionadoras2.vercel.app/api/:path*"
     },
