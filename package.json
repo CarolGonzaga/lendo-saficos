@@ -3,7 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "engines": { "node": "24.x" },
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/prerender-seo.mjs",
@@ -19,9 +21,9 @@
     "@tiptap/react": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
     "dompurify": "^3.4.16",
-    "isomorphic-dompurify": "^3.19.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "sanitize-html": "^2.18.2"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",

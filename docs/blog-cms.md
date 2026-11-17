@@ -64,13 +64,13 @@ Relacionadas priorizam mesma categoria, quantidade de tags em comum e publicaç�
 
 As funções Node `api/blog-index.js`, `api/blog-page.js` e `api/blog-sitemap.js` são encaminhadas pelas rotas específicas na Vercel antes do proxy de outras áreas. Usam chave pública e RLS, sem sessão administrativa. O shell inclui os assets produzidos pelo Vite e o conteúdo HTML é consultado a cada requisição, com `no-store` no navegador e nas CDNs.
 
-Título, descrição e imagem SEO usam os campos opcionais e fazem fallback para título/resumo/capa. A página de matéria produz `BlogPosting` com headline, descrição, imagem, datas e URL, sem autoria inventada. JSON-LD e atributos são escapados; texto rico usa DOMPurify também no servidor. O sitemap consulta em lotes de 500 e inclui somente conteúdo efetivamente público, com `lastmod`.
+Título, descrição e imagem SEO usam os campos opcionais e fazem fallback para título/resumo/capa. A página de matéria produz `BlogPosting` com headline, descrição, imagem, datas e URL, sem autoria inventada. JSON-LD e atributos são escapados; texto rico usa `sanitize-html` no servidor e DOMPurify no navegador. O sitemap consulta em lotes de 500 e inclui somente conteúdo efetivamente público, com `lastmod`.
 
 O script de prerender continua cuidando da home e preparando o shell, mas não gera versões estáticas de blog/matérias/sitemap que poderiam ficar antigas. `robots.txt` continua indicando `/sitemap.xml`. Cache externo de redes sociais ou mecanismos de busca pode demorar a atualizar, embora o servidor passe a responder com o conteúdo novo imediatamente.
 
 ## Segurança e testes
 
-RLS protege matérias, categorias, tags, edições temporárias e Storage. Uma conta autenticada sem `admin_users` não recebe acesso de administração. O cliente e o renderizador validam URLs; links externos usam `noopener noreferrer`. O banco também rejeita protocolos perigosos em blocos. DOMPurify remove HTML executável e restringimos os estilos a cor, tamanho e alinhamento.
+RLS protege matérias, categorias, tags, edições temporárias e Storage. Uma conta autenticada sem `admin_users` não recebe acesso de administração. O cliente e o renderizador validam URLs; links externos usam `noopener noreferrer`. O banco também rejeita protocolos perigosos em blocos. DOMPurify no navegador e `sanitize-html` no servidor removem HTML executável e restringem estilos a cor, tamanho e alinhamento.
 
 `npm test` executa build, testes Node e navegador. Testes de PostgreSQL usam PGlite com a migração e políticas reais, em banco isolado. Os testes HTTP executam as funções com um servidor local que usa esse banco. Os testes de interface usam Playwright com Microsoft Edge e Supabase local de teste, sem tocar em contas ou matérias reais. Para outra plataforma, ajuste o canal do navegador em `tests/blog-browser.mjs` para um Chromium instalado.
 

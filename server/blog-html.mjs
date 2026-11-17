@@ -1,16 +1,4 @@
-import DOMPurify from 'isomorphic-dompurify';
-
-DOMPurify.addHook('afterSanitizeAttributes',node => {
-  if(node.tagName === 'A') {
-    const href=safeUrl(node.getAttribute('href') || '');
-    if(href) node.setAttribute('href',href); else node.removeAttribute('href');
-    node.setAttribute('rel','noopener noreferrer');
-  }
-  if(node.hasAttribute('style')) {
-    const cleaned=(node.getAttribute('style') || '').split(';').filter(rule => /^\s*(color\s*:\s*(#[a-f0-9]{3,8}|[a-z]+|rgba?\([\d.,%\s]+\)|hsla?\([\d.,%\s]+\))|font-size\s*:\s*\d+(\.\d+)?(px|em|rem|%)|text-align\s*:\s*(left|right|center|justify))\s*$/i.test(rule));
-    if(cleaned.length) node.setAttribute('style',cleaned.join(';')); else node.removeAttribute('style');
-  }
-});
+import sanitizeHtml from 'sanitize-html';
 
 export const BASE_URL = 'https://www.lendosaficos.com.br';
 export const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
@@ -25,7 +13,19 @@ export function withBlogChrome(body) {
   return `<header class="site-header"><a class="brand" href="/" aria-label="Lendo Sáficos, página inicial"><img src="/site-assets/lendo-saficos-logo.png" alt="Lendo Sáficos"></a><nav class="main-nav" aria-label="Navegação principal"><a href="/">Início</a><a href="${BASE_URL}/lista120livrossaficos">Lançamentos</a><a href="${BASE_URL}/clubedascolecionadoras">Clube das Colecionadoras</a><a href="${BASE_URL}/mapasaficobienal">Mapa Sáfico</a><a href="/blog">Blog</a></nav></header>${body}<footer class="site-footer"><img src="/images/favicon.png" alt="Lendo Sáficos"><span>© 2026 Lendo Sáficos. Todos os direitos reservados.</span><span>Desenvolvido por <a href="https://carolgonzaga.site/" target="_blank" rel="noopener noreferrer">CarolGonzaga</a></span></footer>`;
 }
 export const isPublic = (article, now = Date.now()) => !article.deleted_at && (article.editorial_status ? article.editorial_status === 'Publicado' : ((article.status === 'Publicado' && Date.parse(article.published_at || article.created_at || '1970-01-01') <= now) || (article.status === 'Agendado' && !!article.scheduled_at && Date.parse(article.scheduled_at) <= now)));
-export const sanitize = value => DOMPurify.sanitize(value || '',{ALLOWED_TAGS:['p','br','b','strong','i','em','span','font','a','h2','h3','ul','ol','li','blockquote'],ALLOWED_ATTR:['href','target','rel','style','color','size'],ALLOWED_URI_REGEXP:/^https?:\/\//i});
+export const sanitize = value => sanitizeHtml(value || '', {
+  allowedTags: ['p','br','b','strong','i','em','span','font','a','h2','h3','ul','ol','li','blockquote'],
+  allowedAttributes: { a: ['href','target','rel'], span: ['style'], font: ['color','size'], p: ['style'], h2: ['style'], h3: ['style'] },
+  allowedSchemes: ['http','https'],
+  allowedStyles: {
+    '*': {
+      color: [/^#[a-f0-9]{3,8}$/i, /^[a-z]+$/i, /^rgba?\([\d.,%\s]+\)$/i, /^hsla?\([\d.,%\s]+\)$/i],
+      'font-size': [/^\d+(?:\.\d+)?(?:px|em|rem|%)$/i],
+      'text-align': [/^(?:left|right|center|justify)$/i],
+    },
+  },
+  transformTags: { a: (_tag, attributes) => ({ tagName: 'a', attribs: { ...attributes, rel: 'noopener noreferrer' } }) },
+});
 
 export function renderBlocks(blocks = []) {
   return `<div class="article-blocks cms-blocks">${blocks.map(block => {

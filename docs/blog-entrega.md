@@ -90,7 +90,7 @@ As respostas usam `no-store`. Suspensão/lixeira deixam de retornar conteúdo de
 
 As permissões continuam no banco: visitante só lê conteúdo público, e login sem vínculo em `admin_users` não permite administração. RLS também protege categorias, tags, rascunhos de edição e Storage. As funções públicas usam chave pública, sem service-role.
 
-DOMPurify substitui a sanitização artesanal. URLs externas só aceitam HTTP/HTTPS e abrem com `noopener noreferrer`. Uploads validam formato, assinatura e tamanho; o bucket restringe MIME/tamanho. A exclusão de mídia verifica todas as referências e é protegida por política e lock transacional. Um salvamento não pode reanexar um arquivo local já removido.
+DOMPurify no navegador e `sanitize-html` no servidor substituem a sanitização artesanal. URLs externas só aceitam HTTP/HTTPS e abrem com `noopener noreferrer`. Uploads validam formato, assinatura e tamanho; o bucket restringe MIME/tamanho. A exclusão de mídia verifica todas as referências e é protegida por política e lock transacional. Um salvamento não pode reanexar um arquivo local já removido.
 
 ## Testes executados
 
