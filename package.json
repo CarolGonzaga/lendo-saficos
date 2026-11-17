@@ -3,19 +3,30 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "engines": { "node": "24.x" },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && node scripts/prerender-seo.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npm run build && node --test tests/*.test.mjs && node tests/blog-browser.mjs",
+    "test:browser": "node tests/blog-browser.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",
+    "@tiptap/extension-text-align": "^3.31.3",
+    "@tiptap/extension-text-style": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
+    "dompurify": "^3.4.16",
+    "isomorphic-dompurify": "^3.19.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@eslint/js": "^9.30.0",
+    "@playwright/test": "^1.63.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.7.0",

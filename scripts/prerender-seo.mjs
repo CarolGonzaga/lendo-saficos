@@ -20,12 +20,10 @@ const SUPABASE_ANON_KEY =
     viteEnv.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-    throw new Error(
-        "VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não encontrada durante o build."
-    );
+    console.warn("[SEO] Sem configuração Supabase: home mantém o HTML base; blog será servido dinamicamente.");
 }
 
-const supabase = createClient(
+const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY,
     {
@@ -35,7 +33,7 @@ const supabase = createClient(
             detectSessionInUrl: false,
         },
     }
-);
+) : null;
 
 function escapeHtml(value = "") {
     return String(value)
@@ -44,20 +42,6 @@ function escapeHtml(value = "") {
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
-}
-
-function escapeXml(value = "") {
-    return escapeHtml(value);
-}
-
-function stripRichText(value = "") {
-    return String(value)
-        .replace(/<br\s*\/?>/gi, " ")
-        .replace(/<\/p>/gi, " ")
-        .replace(/<[^>]+>/g, " ")
-        .replace(/&nbsp;/gi, " ")
-        .replace(/\s+/g, " ")
-        .trim();
 }
 
 function slugify(value = "") {
@@ -89,17 +73,6 @@ function absoluteUrl(value, fallback = "/images/5.jpeg") {
 
     return `${BASE_URL}${resolved.startsWith("/") ? resolved : `/${resolved}`
         }`;
-}
-
-function safeHref(value = "") {
-    if (
-        /^https?:\/\//i.test(value) ||
-        value.startsWith("/")
-    ) {
-        return value;
-    }
-
-    return "#";
 }
 
 function insertBeforeHeadClose(html, value) {
@@ -408,199 +381,6 @@ function renderHome(articles) {
   `;
 }
 
-function renderBlog(articles) {
-    const cards = articles
-        .map(
-            (article) => `
-        <article class="blog-card">
-          ${article.image
-                    ? `
-                <img
-                  src="${escapeHtml(article.image)}"
-                  alt="${escapeHtml(article.title)}"
-                />
-              `
-                    : ""
-                }
-
-          <div>
-            <span class="category-tag">
-              ${escapeHtml(article.category)}
-            </span>
-
-            <h2>
-              <a href="${escapeHtml(articlePath(article))}">
-                ${escapeHtml(article.title)}
-              </a>
-            </h2>
-
-            <p>${escapeHtml(article.excerpt)}</p>
-
-            <a href="${escapeHtml(articlePath(article))}">
-              Ler matéria →
-            </a>
-          </div>
-        </article>
-      `
-        )
-        .join("");
-
-    return `
-    ${renderHeader()}
-
-    <main class="blog wrap">
-      <header class="blog-intro">
-        <p class="eyebrow">
-          Notícias Lendo Sáficos
-        </p>
-
-        <h1>
-          Histórias para
-          <em>ler e descobrir.</em>
-        </h1>
-
-        <p>
-          Notícias, listas, lançamentos e
-          recomendações de literatura sáfica
-          para encontrar sua próxima leitura.
-        </p>
-      </header>
-
-      <section class="blog-grid">
-        ${cards}
-      </section>
-    </main>
-
-    ${renderFooter()}
-  `;
-}
-
-function renderBlocks(blocks) {
-    if (!Array.isArray(blocks)) {
-        return "";
-    }
-
-    return blocks
-        .map((block) => {
-            if (block.type === "text") {
-                const text = stripRichText(block.content);
-
-                return text
-                    ? `<p>${escapeHtml(text)}</p>`
-                    : "";
-            }
-
-            if (block.type === "linklist") {
-                const items = Array.isArray(block.items)
-                    ? block.items
-                    : [];
-
-                const links = items
-                    .map(
-                        (item) => `
-              <li>
-                <a
-                  href="${escapeHtml(safeHref(item.url))}"
-                  rel="noreferrer"
-                >
-                  ${escapeHtml(item.title)}
-                </a>
-              </li>
-            `
-                    )
-                    .join("");
-
-                return `
-          <section>
-            ${block.title
-                        ? `<h2>${escapeHtml(block.title)}</h2>`
-                        : ""
-                    }
-
-            <ul>
-              ${links}
-            </ul>
-          </section>
-        `;
-            }
-
-            if (block.type === "product") {
-                return `
-          <article>
-            ${block.title
-                        ? `<h2>${escapeHtml(block.title)}</h2>`
-                        : ""
-                    }
-
-            ${block.price
-                        ? `<p>${escapeHtml(block.price)}</p>`
-                        : ""
-                    }
-
-            ${block.url
-                        ? `
-                  <a
-                    href="${escapeHtml(safeHref(block.url))}"
-                    rel="noreferrer"
-                  >
-                    Ver produto
-                  </a>
-                `
-                        : ""
-                    }
-          </article>
-        `;
-            }
-
-            return "";
-        })
-        .join("");
-}
-
-function renderArticle(article) {
-    return `
-    ${renderHeader()}
-
-    <main class="article-page wrap">
-      <p class="category-tag">
-        ${escapeHtml(article.category)}
-      </p>
-
-      <h1>${escapeHtml(article.title)}</h1>
-
-      <p class="article-lead">
-        ${escapeHtml(article.excerpt)}
-      </p>
-
-      ${article.image
-            ? `
-            <img
-              class="article-cover"
-              src="${escapeHtml(article.image)}"
-              alt="${escapeHtml(article.title)}"
-            />
-          `
-            : ""
-        }
-
-      <article class="article-blocks">
-        ${renderBlocks(article.blocks)}
-      </article>
-
-      <nav
-        class="article-navigation"
-        aria-label="Navegação entre matérias"
-      >
-        <a href="/blog">
-          ← Voltar para todas as matérias
-        </a>
-      </nav>
-    </main>
-
-    ${renderFooter()}
-  `;
-}
-
 async function writeRoute(pathname, html) {
     if (pathname === "/") {
         await writeFile(INDEX_FILE, html, "utf8");
@@ -627,35 +407,6 @@ async function writeRoute(pathname, html) {
     );
 }
 
-function buildSitemap(articles) {
-    const staticPaths = [
-        "/",
-        "/blog",
-        "/lista120livrossaficos",
-        "/clubedascolecionadoras",
-        "/mapasaficobienal",
-    ];
-
-    const paths = [
-        ...staticPaths,
-        ...articles.map(articlePath),
-    ];
-
-    const urls = paths
-        .map(
-            (pathname) => `
-  <url>
-    <loc>${escapeXml(`${BASE_URL}${pathname}`)}</loc>
-  </url>`
-        )
-        .join("");
-
-    return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}
-</urlset>
-`;
-}
-
 async function main() {
     console.log(
         "[SEO] Iniciando prerender..."
@@ -665,6 +416,9 @@ async function main() {
         INDEX_FILE,
         "utf8"
     );
+
+    await writeFile(path.join(DIST, "blog-shell.html"), template, "utf8");
+    if (!supabase) return;
 
     const { data, error } = await supabase
         .from("blog_articles")
@@ -703,61 +457,6 @@ async function main() {
     );
 
     await writeRoute("/", homeHtml);
-
-    /*
-     * BLOG
-     */
-    let blogHtml = applySeo(template, {
-        title:
-            "Blog de Literatura Sáfica: Livros, Autoras e Novidades | Lendo Sáficos",
-        description:
-            "Notícias, listas, lançamentos, recomendações e matérias sobre livros, autoras e literatura sáfica.",
-        path: "/blog",
-        image: "/images/5.jpeg",
-        type: "website",
-    });
-
-    blogHtml = replaceRoot(
-        blogHtml,
-        renderBlog(articles)
-    );
-
-    await writeRoute("/blog", blogHtml);
-
-    /*
-     * ARTIGOS
-     */
-    for (const article of articles) {
-        const pathname = articlePath(article);
-
-        let articleHtml = applySeo(template, {
-            title: `${article.title} | Lendo Sáficos`,
-            description: article.excerpt,
-            path: pathname,
-            image:
-                article.image || "/images/5.jpeg",
-            type: "article",
-        });
-
-        articleHtml = replaceRoot(
-            articleHtml,
-            renderArticle(article)
-        );
-
-        await writeRoute(
-            pathname,
-            articleHtml
-        );
-    }
-
-    /*
-     * SITEMAP
-     */
-    await writeFile(
-        path.join(DIST, "sitemap.xml"),
-        buildSitemap(articles),
-        "utf8"
-    );
 
     console.log(
         `[SEO] Prerender concluído: ${articles.length} artigo(s) publicado(s).`

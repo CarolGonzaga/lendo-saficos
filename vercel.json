@@ -67,6 +67,18 @@
   ],
   "rewrites": [
     {
+      "source": "/blog",
+      "destination": "/api/blog-index"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/blog-page?slug=:slug"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/blog-sitemap"
+    },
+    {
       "source": "/_serverFn/:path*",
       "destination": "https://clube-das-colecionadoras2.vercel.app/_serverFn/:path*"
     },
@@ -190,5 +202,13 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/blog-page.js": {
+      "includeFiles": "dist/blog-shell.html"
+    },
+    "api/blog-index.js": {
+      "includeFiles": "dist/blog-shell.html"
+    }
+  }
 }
