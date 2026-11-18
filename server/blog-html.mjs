@@ -14,7 +14,7 @@ export function withBlogChrome(body) {
 }
 export const isPublic = (article, now = Date.now()) => !article.deleted_at && (article.editorial_status ? article.editorial_status === 'Publicado' : ((article.status === 'Publicado' && Date.parse(article.published_at || article.created_at || '1970-01-01') <= now) || (article.status === 'Agendado' && !!article.scheduled_at && Date.parse(article.scheduled_at) <= now)));
 export const sanitize = value => sanitizeHtml(value || '', {
-  allowedTags: ['p','br','b','strong','i','em','span','font','a','h2','h3','ul','ol','li','blockquote'],
+  allowedTags: ['p','br','b','strong','i','em','u','span','font','a','h2','h3','ul','ol','li','blockquote'],
   allowedAttributes: { a: ['href','target','rel'], span: ['style'], font: ['color','size'], p: ['style'], h2: ['style'], h3: ['style'] },
   allowedSchemes: ['http','https'],
   allowedStyles: {

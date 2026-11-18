@@ -23,7 +23,7 @@ export function safeUrl(value = '') {
 export function safeImage(value = '') { return /^\/(?!\/)[^\s]*$/.test(value) ? value : safeUrl(value); }
 export function sanitizeRichText(value = '') {
   return DOMPurify.sanitize(value, {
-    ALLOWED_TAGS: ['p', 'br', 'b', 'strong', 'i', 'em', 'span', 'font', 'a', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote'],
+    ALLOWED_TAGS: ['p', 'br', 'b', 'strong', 'i', 'em', 'u', 'span', 'font', 'a', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote'],
     ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'color', 'size'],
     ALLOWED_URI_REGEXP: /^https?:\/\//i,
   });
