@@ -23,7 +23,7 @@ export function RichTextEditor({ value = '', onChange }: { value?: string; onCha
     protocols: ['http', 'https'], isAllowedUri: url => !!safeUrl(url), HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' } } }),
     TextAlign.configure({ types: ['heading', 'paragraph'] }), TextStyleKit, Underline],
     content: legacyHtml(value), onUpdate: ({ editor: current }) => callbackRef.current(sanitizeRichText(current.getHTML())),
-    editorProps: { attributes: { 'aria-label': 'Conteúdo do bloco de texto', class: 'cms-rich-content' } },
+    editorProps: { attributes: { 'aria-label': 'Conteúdo do bloco de texto', class: 'cms-rich-content cms-blocks cms-block article-block article-block-text align-left' } },
   });
   useEffect(() => {
     if (editor && value !== editor.getHTML() && !editor.isFocused) editor.commands.setContent(legacyHtml(value), { emitUpdate: false });

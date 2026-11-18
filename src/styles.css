@@ -188,3 +188,6 @@ body{background:#fff;color:var(--ink)}
 @media(max-width:700px){.covers-viewport{overflow:hidden}.covers-track{gap:12px}.covers-count-3{gap:clamp(22px,8vw,48px)}.covers-count-3 img.cover-orbit{width:clamp(72px,21vw,96px)}.covers-count-4{gap:clamp(14px,4vw,25px)}.covers-count-5,.covers-count-6{gap:9px}}
 @media(prefers-reduced-motion:reduce){.covers-track,.covers-track img.cover-orbit,.cover-card-inner{animation:none!important;transition:none!important;transform:none!important;opacity:1}}
 
+/* Os blocos de matéria empilham em telas estreitas, mesmo quando foram compostos em colunas no editor. */
+@media(max-width:800px){.cms-blocks.article-blocks .cms-block:nth-child(n){grid-column:1/-1!important}}
+
