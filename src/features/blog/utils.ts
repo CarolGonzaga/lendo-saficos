@@ -1,4 +1,9 @@
 import DOMPurify from 'dompurify';
+import { safeImage, safeUrl } from './block-presentation.mjs';
+import { isCanvasBox } from './canvas-layout.mjs';
+import { cleanRichStyle, richAttributes, richTags } from './rich-policy.mjs';
+
+export { safeImage, safeUrl };
 import type { Article, ArticleBlock, ArticleDraft } from './types';
 
 DOMPurify.addHook('afterSanitizeAttributes', node => {
@@ -7,9 +12,13 @@ DOMPurify.addHook('afterSanitizeAttributes', node => {
     if (href) node.setAttribute('href',href); else node.removeAttribute('href');
     node.setAttribute('rel','noopener noreferrer');
   }
+  for (const attribute of Array.from(node.attributes || [])) {
+    if (!richAttributes[node.tagName.toLowerCase()]?.includes(attribute.name)) node.removeAttribute(attribute.name);
+  }
   if (node.hasAttribute('style')) {
-    const cleaned = (node.getAttribute('style') || '').split(';').filter(rule => /^\s*(color\s*:\s*(#[a-f0-9]{3,8}|[a-z]+|rgba?\([\d.,%\s]+\)|hsla?\([\d.,%\s]+\))|font-size\s*:\s*\d+(\.\d+)?(px|em|rem|%)|text-align\s*:\s*(left|right|center|justify))\s*$/i.test(rule));
-    if (cleaned.length) node.setAttribute('style',cleaned.join(';')); else node.removeAttribute('style');
+    const cleaned = cleanRichStyle(node.getAttribute('style') || '');
+    if (cleaned) node.setAttribute('style', cleaned);
+    else node.removeAttribute('style');
   }
 });
 
@@ -17,14 +26,12 @@ export const normalize = (value: string) => value.normalize('NFD').replace(/[\u0
 export const slugify = (value: string) => normalize(value).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 export const articleSlug = (article: Article) => article.slug || `${slugify(article.title)}-${article.id}`;
 export const articleHref = (article: Article) => `/blog/${articleSlug(article)}`;
-export function safeUrl(value = '') {
-  try { const url = new URL(value); return ['https:', 'http:'].includes(url.protocol) ? url.href : ''; } catch { return ''; }
-}
-export function safeImage(value = '') { return /^\/(?!\/)[^\s]*$/.test(value) ? value : safeUrl(value); }
 export function sanitizeRichText(value = '') {
   return DOMPurify.sanitize(value, {
-    ALLOWED_TAGS: ['p', 'br', 'b', 'strong', 'i', 'em', 'u', 'span', 'font', 'a', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote'],
-    ALLOWED_ATTR: ['href', 'target', 'rel', 'style', 'color', 'size'],
+    ALLOWED_TAGS: richTags,
+    ALLOWED_ATTR: [...new Set(Object.values(richAttributes).flat())],
+    ALLOW_DATA_ATTR: false,
+    ALLOW_ARIA_ATTR: false,
     ALLOWED_URI_REGEXP: /^https?:\/\//i,
   });
 }
@@ -40,6 +47,12 @@ export function prioritize(articles: Article[]) {
     || Date.parse(editorialDate(second) || '1970-01-01') - Date.parse(editorialDate(first) || '1970-01-01'));
 }
 export const formatDate = (value?: string | null) => value ? new Date(value).toLocaleString('pt-BR') : '—';
+export const blockLabels: Record<ArticleBlock['type'], string> = {
+  text: 'Texto', h1: 'Título H1', h2: 'Subtítulo H2', h3: 'Subtítulo H3',
+  image: 'Imagem', quote: 'Citação', divider: 'Separador', bullets: 'Marcadores',
+  numbered: 'Lista numerada', button: 'Botão/link', card: 'Card', callout: 'Destaque',
+  spacer: 'Espaçador', product: 'Produto', linklist: 'Lista de links',
+};
 export function newBlock(type: ArticleBlock['type']): ArticleBlock {
   const base = { id: crypto.randomUUID(), span: 12, align: 'left' as const };
   switch (type) {
@@ -48,7 +61,7 @@ export function newBlock(type: ArticleBlock['type']): ArticleBlock {
     case 'image': return { ...base, type, image: '', alt: '', caption: '', credit: '' };
     case 'button': return { ...base, type, title: '', url: '' };
     case 'bullets': case 'numbered': return { ...base, type, entries: [] };
-    case 'divider': return { ...base, type };
+    case 'divider': case 'spacer': return { ...base, type };
     default: return { ...base, type, content: '' };
   }
 }
@@ -71,6 +84,7 @@ export function validateDraft(draft: ArticleDraft) {
   if (draft.image && !safeImage(draft.image)) throw new Error('Imagem de capa inválida.');
   if (draft.seo_image && !safeImage(draft.seo_image)) throw new Error('Imagem social inválida.');
   for (const block of draft.blocks || []) {
+    if (block.box !== undefined && !isCanvasBox(block.box)) throw new Error('Posição ou dimensões inválidas no canvas.');
     if ('url' in block && block.url && !safeUrl(block.url)) throw new Error('Os links devem começar com https:// ou http://.');
     if ('image' in block && block.image && !safeImage(block.image)) throw new Error('Endereço de imagem inválido.');
     if (block.type === 'linklist' && block.items?.some(item => !item.title.trim() || !safeUrl(item.url))) throw new Error('Preencha o nome e um endereço válido em cada item da lista.');

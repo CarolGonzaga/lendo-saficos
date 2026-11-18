@@ -1,11 +1,10 @@
 import sanitizeHtml from 'sanitize-html';
+import { escapeHtml, renderSharedBlocks, safeImage, safeUrl } from '../src/features/blog/block-presentation.mjs';
+import { richAttributes, richStyles, richTags } from '../src/features/blog/rich-policy.mjs';
+
+export { escapeHtml, safeImage, safeUrl };
 
 export const BASE_URL = 'https://www.lendosaficos.com.br';
-export const escapeHtml = (value = '') => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
-export function safeUrl(value = '') {
-  try { const url = new URL(value); return ['https:','http:'].includes(url.protocol) ? url.href : ''; } catch { return ''; }
-}
-export const safeImage = (value = '') => /^\/(?!\/)[^\s]*$/.test(value) ? value : safeUrl(value);
 export const absoluteImage = value => { const image = safeImage(value); return image.startsWith('/') ? BASE_URL+image : image; };
 export const slugify = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 export const articlePath = article => `/blog/${article.slug || `${slugify(article.title)}-${article.id}`}`;
@@ -14,39 +13,18 @@ export function withBlogChrome(body) {
 }
 export const isPublic = (article, now = Date.now()) => !article.deleted_at && (article.editorial_status ? article.editorial_status === 'Publicado' : ((article.status === 'Publicado' && Date.parse(article.published_at || article.created_at || '1970-01-01') <= now) || (article.status === 'Agendado' && !!article.scheduled_at && Date.parse(article.scheduled_at) <= now)));
 export const sanitize = value => sanitizeHtml(value || '', {
-  allowedTags: ['p','br','b','strong','i','em','u','span','font','a','h2','h3','ul','ol','li','blockquote'],
-  allowedAttributes: { a: ['href','target','rel'], span: ['style'], font: ['color','size'], p: ['style'], h2: ['style'], h3: ['style'] },
-  allowedSchemes: ['http','https'],
-  allowedStyles: {
-    '*': {
-      color: [/^#[a-f0-9]{3,8}$/i, /^[a-z]+$/i, /^rgba?\([\d.,%\s]+\)$/i, /^hsla?\([\d.,%\s]+\)$/i],
-      'font-size': [/^\d+(?:\.\d+)?(?:px|em|rem|%)$/i],
-      'text-align': [/^(?:left|right|center|justify)$/i],
-    },
-  },
-  transformTags: { a: (_tag, attributes) => ({ tagName: 'a', attribs: { ...attributes, rel: 'noopener noreferrer' } }) },
+  allowedTags: richTags,
+  allowedAttributes: richAttributes,
+  allowedSchemes: ['http', 'https'],
+  allowedStyles: { '*': richStyles },
+  transformTags: { a: (_tag, attributes) => {
+    const href = safeUrl(attributes.href);
+    return { tagName: 'a', attribs: { ...attributes, href, rel: 'noopener noreferrer' } };
+  } },
 });
 
-export function renderBlocks(blocks = []) {
-  return `<div class="article-blocks cms-blocks">${blocks.map(block => {
-    let content = '';
-    const link = (url,title,classname='') => safeUrl(url) ? `<a class="${classname}" href="${escapeHtml(safeUrl(url))}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a>` : escapeHtml(title);
-    switch(block.type) {
-      case 'text': content=sanitize(block.content); break;
-      case 'h2': case 'h3': content=`<${block.type}>${escapeHtml(block.content)}</${block.type}>`; break;
-      case 'quote': content=`<blockquote>${escapeHtml(block.content)}</blockquote>`; break;
-      case 'divider': content='<hr>'; break;
-      case 'bullets': case 'numbered': { const tag=block.type === 'bullets' ? 'ul' : 'ol'; content=`<${tag}>${(block.entries || []).map(entry => `<li>${escapeHtml(entry)}</li>`).join('')}</${tag}>`; break; }
-      case 'image': content=`<figure>${safeImage(block.image) ? `<img src="${escapeHtml(safeImage(block.image))}" alt="${escapeHtml(block.alt)}" loading="lazy">` : ''}<figcaption>${escapeHtml(block.caption)} ${escapeHtml(block.credit)}</figcaption></figure>`; break;
-      case 'button': content=link(block.url,block.title || 'Abrir link','button button-primary'); break;
-      case 'linklist': content=`<section class="book-link-list"><h2>${escapeHtml(block.title)}</h2><div>${(block.items || []).map(item => link(item.url,item.title+' →')).join('')}</div></section>`; break;
-      case 'product': content=`<article class="product-card">${safeImage(block.image) ? `<img src="${escapeHtml(safeImage(block.image))}" alt="${escapeHtml(block.title)}" loading="lazy">` : ''}<div><h3>${escapeHtml(block.title)}</h3><p>${escapeHtml(block.price)}</p>${link(block.url,'Ver produto →','button button-primary')}</div></article>`; break;
-    }
-    const align=['left','center','right','justify'].includes(block.align) ? block.align : 'left';
-    const span=[4,6,8,12].includes(block.span) ? block.span : 12;
-    return `<div class="article-block cms-block" style="text-align:${align};--cms-span:span ${span}">${content}</div>`;
-  }).join('')}</div>`;
-}
+export const renderBlocks = (blocks = []) =>
+  `<div class="cms-rendered-content">${renderSharedBlocks(blocks, sanitize)}</div>`;
 
 export function applyMetadata(template,{title,description,image,path,type='website',noindex=false,jsonld}) {
   let html=template.replace(/<title>[\s\S]*?<\/title>/i,`<title>${escapeHtml(title)}</title>`);
@@ -77,7 +55,7 @@ export function articleHtml(template,article) {
   const description=article.seo_description || article.excerpt;
   const image=article.seo_image || article.image;
   const html=applyMetadata(template,{title:`${article.seo_title || article.title} | Lendo Sáficos`,description,image,path,type:'article',jsonld:{'@context':'https://schema.org','@type':'BlogPosting',headline:article.title,description,image:absoluteImage(image),datePublished:article.status === 'Agendado' ? article.scheduled_at : article.published_at,dateModified:article.updated_at,url:BASE_URL+path,mainEntityOfPage:BASE_URL+path}});
-  return html.replace(/<div\b[^>]*id=["']root["'][^>]*>[\s\S]*?<\/div>/i,`<div id="root">${withBlogChrome(renderArticle(article))}</div>`);
+  return html.replace(/<div\b[^>]*id=["']root["'][^>]*>[\s\S]*?<\/div>/i,() => `<div id="root">${withBlogChrome(renderArticle(article))}</div>`);
 }
 export function buildSitemap(articles) {
   const routes=['/','/blog','/lista120livrossaficos','/clubedascolecionadoras','/mapasaficobienal'];

@@ -1,0 +1,119 @@
+.cms-editor.is-visual .cms-editor-layout { grid-template-columns: minmax(0, 1fr); }
+.cms-editor.is-visual .cms-editor-sidebar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  align-items: start;
+  gap: 16px;
+}
+.cms-editor-main, .cms-visual-editor, .cms-canvas-inspector, .cms-canvas-layers { min-width: 0; }
+.cms-visual-editor { color: var(--ink); }
+.cms-visual-editor input { accent-color: var(--pink); }
+.cms-visual-editor .cms-rich-toolbar label {
+  display: grid;
+  gap: 2px;
+  min-width: min(100%, 104px);
+  max-width: 100%;
+}
+.cms-visual-editor .cms-rich-toolbar select {
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+  border: 1px solid var(--blog-border);
+  background: var(--blog-paper);
+}
+.cms-visual-editor :is(fieldset, details) { border-color: var(--blog-border); }
+.cms-visual-editor fieldset { border: 1px solid var(--blog-border); border-radius: 8px; padding: 12px; }
+.cms-visual-editor legend { font-weight: 700; padding-inline: 5px; }
+.cms-visual-editor summary { cursor: pointer; font-weight: 600; }
+.cms-canvas-toolbar, .cms-canvas-palette { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cms-canvas-grid-settings[open] { flex-basis: 100%; }
+.cms-canvas-help, .cms-canvas-status { font-size: 13px; color: var(--blog-muted); }
+.cms-canvas-status { min-height: 1.4em; }
+.cms-canvas-conversion { padding: 12px; background: var(--blog-tint); margin-bottom: 12px; }
+.cms-canvas-conversion button { margin-inline-end: 8px; }
+.cms-canvas-palette { margin: 0 0 12px; }
+.cms-canvas-palette label { margin: 0; }
+.cms-canvas-scroll {
+  padding: 12px;
+  overflow: auto;
+  background: var(--blog-tint);
+  border: 1px solid var(--blog-border);
+  border-radius: 8px;
+}
+.cms-editorial-stage {
+  width: 900px;
+  margin: 0 auto;
+  background: var(--blog-paper);
+  box-shadow: 0 0 0 1px var(--blog-border);
+}
+.cms-canvas-layout.cms-editing-stage { min-height: 420px; position: relative; }
+.cms-editing-stage .cms-block { position: relative; }
+.cms-editing-stage [data-editor-hidden] { visibility: hidden; }
+.cms-canvas-overlap { padding: 8px 12px; border-inline-start: 3px solid var(--pink); background: var(--blog-tint); }
+.cms-editing-stage .cms-block:has(.cms-canvas-hit[aria-pressed="true"], .cms-inline-target) { z-index: 1; }
+.cms-editing-stage .cms-block:has(.cms-inline-target) { outline: 2px solid var(--pink); }
+.cms-inline-target .cms-rich-content { min-height: 24px; padding: 0; background: transparent; text-align: inherit; }
+.cms-inline-target .cms-rich-content:focus-visible { outline: none; }
+.cms-canvas-grid, .cms-canvas-guide { position: absolute; pointer-events: none; }
+.cms-canvas-grid {
+  inset: 0;
+  background-image: repeating-linear-gradient(to bottom, color-mix(in srgb, var(--soft-pink) 19%, transparent) 0 1px, transparent 1px var(--canvas-grid-row));
+}
+.cms-canvas-grid span {
+  position: absolute; inset-block: 0;
+  border-inline: 1px solid color-mix(in srgb, var(--soft-pink) 35%, transparent);
+  background: color-mix(in srgb, var(--soft-pink) 7%, transparent);
+}
+.cms-visual-editor .cms-canvas-hit {
+  position: absolute; inset: 0; touch-action: none; user-select: none; cursor: grab;
+  width: 100%; padding: 0; border: 1px solid transparent; border-radius: 0;
+  background: transparent; color: var(--ink); text-transform: none;
+}
+.cms-visual-editor .cms-canvas-hit:hover { border-color: var(--soft-pink); }
+.cms-visual-editor .cms-canvas-hit[aria-pressed="true"] { outline: 2px solid var(--pink); outline-offset: 0; }
+.cms-visual-editor .cms-canvas-hit[data-conflict="true"] { outline-style: dashed; background: color-mix(in srgb, var(--pink) 13%, transparent); }
+.cms-canvas-hit:active { cursor: grabbing; }
+.cms-visual-editor .cms-resize-point {
+  position: absolute; z-index: 2; touch-action: none;
+  width: 12px; height: 12px; padding: 0;
+  border: 2px solid var(--pink); border-radius: 2px; background: var(--blog-paper);
+  transform: translate(-50%, -50%);
+}
+.cms-resize-nw, .cms-resize-w, .cms-resize-sw { left: 0; }
+.cms-resize-ne, .cms-resize-e, .cms-resize-se { left: 100%; }
+.cms-resize-n, .cms-resize-s { left: 50%; }
+.cms-resize-nw, .cms-resize-n, .cms-resize-ne { top: 0; }
+.cms-resize-sw, .cms-resize-s, .cms-resize-se { top: 100%; }
+.cms-resize-e, .cms-resize-w { top: 50%; cursor: ew-resize; }
+.cms-resize-n, .cms-resize-s { cursor: ns-resize; }
+.cms-resize-nw, .cms-resize-se { cursor: nwse-resize; }
+.cms-resize-ne, .cms-resize-sw { cursor: nesw-resize; }
+.cms-visual-editor :is(.cms-resize-n, .cms-resize-s, .cms-resize-e, .cms-resize-w) { border: 0; background: transparent; }
+.cms-visual-editor :is(.cms-resize-n, .cms-resize-s) { width: 60%; }
+.cms-visual-editor :is(.cms-resize-e, .cms-resize-w) { height: 60%; }
+.cms-visual-editor :is(.cms-resize-n, .cms-resize-s, .cms-resize-e, .cms-resize-w)::after {
+  content: '';
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 12px; height: 12px; border: 2px solid var(--pink); border-radius: 2px;
+  background: var(--blog-paper);
+}
+.cms-canvas-guide { z-index: 3; background: var(--orchid); }
+.cms-canvas-guide-x { inset-block: 0; width: 1px; }
+.cms-canvas-guide-y { inset-inline: 0; height: 1px; }
+.cms-canvas-panels { display: grid; grid-template-columns: minmax(160px, .32fr) minmax(0, 1fr); gap: 12px; }
+.cms-canvas-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 125px), 1fr)); gap: 8px; margin-block: 8px; }
+.cms-canvas-fields label { margin: 0; }
+.cms-canvas-layers > button { text-align: left; display: block; width: 100%; margin-bottom: 6px; overflow-wrap: anywhere; }
+.cms-visual-editor button[aria-pressed="true"]:not(.cms-canvas-hit), .cms-preview-tools button[aria-pressed="true"] {
+  color: var(--blog-paper); background: var(--ink); border-color: var(--ink);
+}
+.cms-layer-controls { margin-top: 12px; }
+.cms-layer-controls button { margin: 0 4px 5px 0; }
+.cms-canvas-inspector .cms-checkbox { display: flex; align-items: center; gap: 5px; }
+.cms-canvas-inspector .cms-checkbox input { width: auto; }
+.cms-canvas-content-properties, .cms-canvas-templates { margin-top: 12px; }
+@media (max-width: 660px) {
+  .cms-canvas-panels { grid-template-columns: minmax(0, 1fr); }
+  .cms-editor-mode { flex-wrap: wrap; }
+}
+

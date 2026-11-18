@@ -1,16 +1,22 @@
+import type { CanvasBox } from './canvas-layout.mjs';
+
 export const ARTICLE_STATUSES = ['Rascunho', 'Agendado', 'Publicado', 'Suspenso', 'Lixeira'] as const;
 export type ArticleStatus = typeof ARTICLE_STATUSES[number];
 export type ContentAlign = 'left' | 'center' | 'right' | 'justify';
 export type ListItem = { title: string; url: string };
-type BlockBase = { id: string; span: number; align: ContentAlign };
+type BlockBase = { id: string; span: number; align: ContentAlign; box?: CanvasBox; layer?: {
+  name?: string; locked?: boolean; hidden?: boolean; group?: string;
+  limits?: { minWidth?: number; maxWidth?: number; minHeight?: number; maxHeight?: number };
+} };
 export type ArticleBlock = BlockBase & (
   | { type: 'text'; content?: string }
   | { type: 'product'; title?: string; price?: string; url?: string; image?: string }
   | { type: 'linklist'; title?: string; items?: ListItem[] }
   | { type: 'image'; image?: string; alt?: string; caption?: string; credit?: string }
-  | { type: 'h2' | 'h3' | 'quote'; content?: string }
+  | { type: 'h1' | 'h2' | 'h3' | 'quote'; content?: string }
   | { type: 'bullets' | 'numbered'; entries?: string[] }
-  | { type: 'divider' }
+  | { type: 'divider' | 'spacer' }
+  | { type: 'card' | 'callout'; title?: string; content?: string; url?: string }
   | { type: 'button'; title?: string; url?: string }
 );
 export type ArticleSeo = { seo_title?: string; seo_description?: string; seo_image?: string };
