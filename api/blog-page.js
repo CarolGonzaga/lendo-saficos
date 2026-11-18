@@ -18,13 +18,19 @@ export default async function handler(request,response) {
   try {
     const slug=String(request.query?.slug || '').replace(/\/$/,'');
     const template=await getTemplate();
-    const {data,error}=await publicClient().rpc('get_public_blog_article',{article_slug:slug});
+    const db=publicClient();
+    const [{data,error},{data:settings}]=await Promise.all([
+      db.rpc('get_public_blog_article',{article_slug:slug}),
+      db.rpc('blog_public_settings'),
+    ]);
     if (error) throw error;
     if (!data || !isPublic(data)) {
       response.status(404).send(applyMetadata(template,{title:'Matéria não encontrada | Lendo Sáficos',description:'Esta matéria não está disponível.',image:'/images/5.jpeg',path:'/blog/'+encodeURIComponent(slug),noindex:true}).replace('<div id="root"></div>','<div id="root"><main class="blog wrap"><h1>Matéria não encontrada</h1><p>Esta matéria não existe ou não está disponível para leitura.</p><a href="/blog">Voltar ao blog</a></main></div>'));
       return;
     }
     await recordView(data.id);
-    response.status(200).send(articleHtml(template,data));
+    const comments_effective_mode=data.comments_mode && data.comments_mode !== 'inherit'
+      ? data.comments_mode : settings?.comments_mode || 'moderated';
+    response.status(200).send(articleHtml(template,{...data,comments_effective_mode}));
   } catch(error) { console.error('[blog-page]',error.message); response.status(503).send('<!doctype html><html lang="pt-BR"><meta name="robots" content="noindex"><title>Blog indisponível</title><p>Não foi possível carregar a matéria. Tente novamente em instantes.</p></html>'); }
 }

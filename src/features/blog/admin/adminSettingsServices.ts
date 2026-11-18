@@ -1,4 +1,5 @@
 import { supabase } from '../../../lib/supabase';
+import type { CommentsMode } from '../types';
 
 export type BlogSettings = {
   blog_name: string;
@@ -6,6 +7,7 @@ export type BlogSettings = {
   description: string;
   contact_email: string;
   posts_per_page: number;
+  comments_mode: Exclude<CommentsMode,'inherit'>;
 };
 
 export type TeamMember = {
@@ -17,7 +19,7 @@ export type TeamMember = {
 };
 
 export const defaultSettings: BlogSettings = {
-  blog_name: 'Lendo Sáficos', tagline: '', description: '', contact_email: '', posts_per_page: 12,
+  blog_name: 'Lendo Sáficos', tagline: '', description: '', contact_email: '', posts_per_page: 12, comments_mode:'moderated',
 };
 
 function client() {
@@ -34,7 +36,7 @@ export async function getCurrentTeamRole(): Promise<'admin' | 'author' | null> {
 }
 
 export async function getBlogSettings(): Promise<BlogSettings> {
-  const { data, error } = await client().from('blog_settings').select('blog_name,tagline,description,contact_email,posts_per_page').eq('id', 1).maybeSingle();
+  const { data, error } = await client().from('blog_settings').select('blog_name,tagline,description,contact_email,posts_per_page,comments_mode').eq('id', 1).maybeSingle();
   if (error) throw error;
   return { ...defaultSettings, ...data };
 }
@@ -46,14 +48,27 @@ export async function saveBlogSettings(settings: BlogSettings): Promise<BlogSett
     description: settings.description.trim(),
     contact_email: settings.contact_email.trim(),
     posts_per_page: Number(settings.posts_per_page),
+    comments_mode: settings.comments_mode,
   };
   if (!clean.blog_name || clean.blog_name.length > 120) throw new Error('Informe um nome de até 120 caracteres.');
   if (clean.tagline.length > 240 || clean.description.length > 2000) throw new Error('Assinatura ou descrição muito longa.');
   if (clean.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean.contact_email)) throw new Error('E-mail de contato inválido.');
   if (!Number.isInteger(clean.posts_per_page) || clean.posts_per_page < 3 || clean.posts_per_page > 40) throw new Error('Escolha de 3 a 40 matérias por página.');
-  const { data, error } = await client().from('blog_settings').update(clean).eq('id', 1).select('blog_name,tagline,description,contact_email,posts_per_page').single();
+  const { data, error } = await client().from('blog_settings').update(clean).eq('id', 1).select('blog_name,tagline,description,contact_email,posts_per_page,comments_mode').single();
   if (error || !data) throw new Error(error?.message || 'Configurações não foram salvas.');
   return data as BlogSettings;
+}
+
+export async function getMyDisplayName(): Promise<string> {
+  const { data, error } = await client().rpc('blog_current_display_name');
+  if (error) throw error;
+  return typeof data === 'string' ? data : '';
+}
+
+export async function saveMyDisplayName(name: string): Promise<string> {
+  const { data, error } = await client().rpc('blog_update_my_display_name', { new_display_name:name.trim() });
+  if (error) throw error;
+  return typeof data === 'string' ? data : '';
 }
 
 export async function listTeamMembers(): Promise<TeamMember[]> {

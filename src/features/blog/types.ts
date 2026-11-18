@@ -14,12 +14,14 @@ export type ArticleBlock = BlockBase & (
   | { type: 'button'; title?: string; url?: string }
 );
 export type ArticleSeo = { seo_title?: string; seo_description?: string; seo_image?: string };
+export type CommentsMode = 'inherit' | 'moderated' | 'open' | 'off';
 export type Article = ArticleSeo & {
   id: number; category: string; category_id?: number | null; title: string; excerpt: string;
   image: string; cover_alt?: string; status: ArticleStatus; featured?: boolean;
   editorial_status?: ArticleStatus;
   blocks?: ArticleBlock[]; slug?: string; tags?: string[];
   created_at?: string; updated_at?: string; published_at?: string | null;
+  author_user_id?: string | null; author_name?: string; comments_mode?: CommentsMode;
   scheduled_at?: string | null; deleted_at?: string | null;
 };
 export type ArticleDraft = Omit<Article, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'editorial_status'>;

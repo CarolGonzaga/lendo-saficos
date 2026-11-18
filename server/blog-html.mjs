@@ -65,7 +65,12 @@ export function applyMetadata(template,{title,description,image,path,type='websi
   return html;
 }
 export function renderArticle(article) {
-  return `<main class="article-page cms-article"><a class="back-link" href="/blog">← Voltar ao blog</a><span class="category-tag">${escapeHtml(article.category)}</span><h1>${escapeHtml(article.title)}</h1><p class="article-lead">${escapeHtml(article.excerpt)}</p>${safeImage(article.image) ? `<img class="article-cover" src="${escapeHtml(safeImage(article.image))}" alt="${escapeHtml(article.cover_alt)}">` : ''}${renderBlocks(article.blocks)}<a class="text-link" href="/blog">Voltar a todas as matérias</a></main>`;
+  const published = article.status === 'Agendado' ? article.scheduled_at : article.published_at;
+  const date = published && !Number.isNaN(Date.parse(published)) ? new Intl.DateTimeFormat('pt-BR',{day:'numeric',month:'long',year:'numeric',timeZone:'America/Sao_Paulo'}).format(new Date(published)) : '';
+  const commentsMode = article.comments_effective_mode || (article.comments_mode === 'inherit' ? 'moderated' : article.comments_mode || 'moderated');
+  const byline = `<div class="article-byline">${date ? `<time datetime="${escapeHtml(published)}">${escapeHtml(date)}</time>` : ''}<span>Por ${escapeHtml(article.author_name || 'Equipe Lendo Sáficos')}</span>${commentsMode !== 'off' ? '<a href="#comentarios">Deixe um comentário</a>' : ''}</div>`;
+  const comments = commentsMode !== 'off' ? '<section class="blog-comments" id="comentarios"><h2>Comentários</h2><p>Carregando comentários…</p></section>' : '';
+  return `<main class="article-page cms-article"><a class="back-link" href="/blog">← Voltar ao blog</a><span class="category-tag">${escapeHtml(article.category)}</span><h1>${escapeHtml(article.title)}</h1>${byline}<p class="article-lead">${escapeHtml(article.excerpt)}</p>${safeImage(article.image) ? `<img class="article-cover" src="${escapeHtml(safeImage(article.image))}" alt="${escapeHtml(article.cover_alt)}">` : ''}${renderBlocks(article.blocks)}<a class="text-link" href="/blog">Voltar a todas as matérias</a>${comments}</main>`;
 }
 export function articleHtml(template,article) {
   const path=articlePath(article);
