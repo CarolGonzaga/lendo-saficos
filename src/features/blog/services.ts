@@ -16,7 +16,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
   return data as Article | null;
 }
 export async function getHomeArticles() {
-  const { data, error } = await client().rpc('search_blog_articles', { page_size: 3 });
+  const { data, error } = await client().rpc('search_blog_articles', { page_size: 4 });
   if (error) throw error;
   return (data as ArticlePage).articles;
 }

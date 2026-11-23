@@ -4,7 +4,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 
 import type { Article, ArticleBlock } from "./features/blog/types";
-import { articleHref, isPublic, prioritize } from "./features/blog/utils";
+import { HomeEditorial } from "./HomeEditorial";
 import { getHomeArticles } from "./features/blog/services";
 import { BlogPage } from "./features/blog/BlogPage";
 import "./features/blog/blog.css";
@@ -88,16 +88,7 @@ const kindleTemplate: ArticleBlock[] = [
 ];
 type SocialLinkProps = { href: string; label: string; children: ReactNode };
 
-const coverFiles = Array.from({ length: 129 }, (_, index) => {
-  const number = index + 1;
-  const extension =
-    number <= 9 || (number >= 66 && number <= 85) ? "jpg" : "jpeg";
-  return `/images/covers/${number}.${extension}`;
-});
-
-function Arrow() {
-  return <span aria-hidden="true">→</span>;
-}
+function Arrow() { return <span aria-hidden="true">→</span>; }
 function SocialLink({ href, label, children }: SocialLinkProps) {
   return (
     <a href={href} target="_blank" rel="noreferrer" aria-label={label}>
@@ -106,13 +97,39 @@ function SocialLink({ href, label, children }: SocialLinkProps) {
   );
 }
 
-function Header() {
+function Header({ home = false }: { home?: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
   return (
-    <header className="site-header">
+    <header className="site-header" onKeyDown={event => {
+      if (event.key !== "Escape" || !menuOpen) return;
+      event.preventDefault();
+      setMenuOpen(false);
+      event.currentTarget.querySelector<HTMLButtonElement>(".home-menu-toggle")?.focus();
+    }}>
       <a className="brand" href="/" aria-label="Lendo Sáficos, página inicial">
         <img src="/site-assets/lendo-saficos-logo.png" alt="Lendo Sáficos" />
       </a>
-      <nav className="main-nav" aria-label="Navegação principal">
+      {home && <button
+        className="home-menu-toggle"
+        type="button"
+        aria-controls="home-main-nav"
+        aria-expanded={menuOpen}
+        aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
+        onClick={() => setMenuOpen(open => !open)}
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
+          {menuOpen ? <path d="m6 6 12 12M18 6 6 18" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+        </svg>
+      </button>}
+      <nav
+        className="main-nav"
+        id={home ? "home-main-nav" : undefined}
+        data-open={home ? menuOpen : undefined}
+        aria-label="Navegação principal"
+        onClick={home ? event => {
+          if ((event.target as HTMLElement).closest("a")) setMenuOpen(false);
+        } : undefined}
+      >
         <a href="/">Início</a>
         <a href="https://www.lendosaficos.com.br/lista120livrossaficos">
           Lançamentos
@@ -120,9 +137,9 @@ function Header() {
         <a href="https://www.lendosaficos.com.br/clubedascolecionadoras">
           Clube das Colecionadoras
         </a>
-        <a href="https://www.lendosaficos.com.br/mapasaficobienal">
+        {!home && <a href="https://www.lendosaficos.com.br/mapasaficobienal">
           Mapa Sáfico
-        </a>
+        </a>}
         <a href="/blog">Blog</a>
       </nav>
     </header>
@@ -177,150 +194,18 @@ function Socials() {
   );
 }
 
-function coverAt(round: number, position: number) {
-  return coverFiles[(round * 13 + position * 23) % coverFiles.length];
-}
-
-function BooksStrip() {
-  const [round, setRound] = useState(0);
-  const [replacingSlot, setReplacingSlot] = useState(-1);
-
-  useEffect(() => {
-    const delay = replacingSlot === -1 ? 3000 : 680;
-    const timer = window.setTimeout(() => {
-      if (replacingSlot < 4) {
-        setReplacingSlot((slot) => slot + 1);
-      } else {
-        setRound((current) => current + 1);
-        setReplacingSlot(-1);
-      }
-    }, delay);
-    return () => window.clearTimeout(timer);
-  }, [replacingSlot]);
-
-  return (
-    <section className="books-strip">
-      <div className="wrap books-content">
-        <div className="books-number">+120</div>
-        <div className="books-copy">
-          <h2>
-            Livros sáficos
-            <br />
-            para descobrir em 2026
-          </h2>
-          <a
-            className="text-link"
-            href="https://www.lendosaficos.com.br/lista120livrossaficos"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Ver lista completa <Arrow />
-          </a>
-        </div>
-        <div
-          className="covers-viewport"
-          aria-label="Cinco capas de livros sáficos em movimento"
-        >
-          <div className="covers-track covers-count-5">
-            {Array.from({ length: 5 }, (_, position) => {
-              const flipCount = round + (position <= replacingSlot ? 1 : 0);
-              const isFlipped = flipCount % 2 === 1;
-              const frontRound = Math.floor(flipCount / 2) * 2;
-              const backRound = Math.floor((flipCount - 1) / 2) * 2 + 1;
-              const frontSrc = coverAt(frontRound, position);
-              const backSrc = coverAt(backRound >= 0 ? backRound : 1, position);
-
-              return (
-                <div
-                  className={`cover-slot cover-slot-${position + 1}`}
-                  key={position}
-                >
-                  <div
-                    className={`cover-card-inner ${isFlipped ? "is-flipped" : ""}`}
-                  >
-                    <div className="cover-card-face cover-card-front">
-                      <img
-                        className="cover-orbit"
-                        src={frontSrc}
-                        alt="Capa de livro sáfico"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className="cover-card-face cover-card-back">
-                      <img
-                        className="cover-orbit"
-                        src={backSrc}
-                        alt="Capa de livro sáfico"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-function News({ articles }: { articles: Article[] }) {
-  const published = prioritize(articles.filter((article) => isPublic(article)));
-  const [featured, ...others] = published;
-  if (!featured) return null;
-  return (
-    <section className="news wrap">
-      <div className="news-heading">
-        <p className="eyebrow">
-          Para ler
-          <br />
-          agora
-        </p>
-        <a className="text-link" href="/blog">
-          Ver todas as matérias <Arrow />
-        </a>
-      </div>
-      <a className="news-feature" href={articleHref(featured)}>
-        <img src={featured.image} alt="" />
-        <div>
-          <p className="eyebrow">{featured.category}</p>
-          <h3>{featured.title}</h3>
-          <p>{featured.excerpt}</p>
-          <b>
-            Ler matéria <Arrow />
-          </b>
-        </div>
-      </a>
-      <div className="news-list">
-        {others.slice(0, 2).map((article) => (
-          <a className="news-small" href={articleHref(article)} key={article.id}>
-            <div>
-              <p className="eyebrow">{article.category}</p>
-              <h3>{article.title}</h3>
-              <p>{article.excerpt}</p>
-              <b>
-                Ler agora <Arrow />
-              </b>
-            </div>
-          </a>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function Home({ articles }: { articles: Article[] }) {
   return (
-    <>
+    <div className="home-site">
       <SeoMetadata
         title="Livros Sáficos, Literatura e Lançamentos | Lendo Sáficos"
         description="Descubra livros sáficos, lançamentos, romances, autoras, recomendações e novidades da literatura sáfica no Lendo Sáficos."
         path="/"
       />
 
-      <Header />
+      <Header home />
       <main>
-        <section className="hero wrap">
+        <section className="hero home-container">
           <div className="hero-copy">
             <p className="eyebrow">Lendo Sáficos</p>
             <h1>O fandom da<br /><em>literatura sáfica</em></h1>
@@ -347,64 +232,12 @@ function Home({ articles }: { articles: Article[] }) {
               src="/images/hero2.jpeg"
               alt="Imagem complementar do universo Lendo Sáficos"
             />
-            <span className="spark spark-one">✦</span>
-            <span className="spark spark-two">✦</span>
           </div>
         </section>
-        <BooksStrip />
-        <section className="features wrap">
-          <article className="feature-card club-feature">
-            <div className="feature-copy">
-              <p className="eyebrow">Colecione histórias</p>
-              <h2>
-                Clube das
-                <br />
-                Colecionadoras
-              </h2>
-              <p>
-                Um álbum virtual para quem ama literatura sáfica. Responda
-                quizzes, colecione figurinhas, complete pôsteres e ganhe
-                recompensas exclusivas!
-              </p>
-              <a
-                className="button button-primary"
-                href="https://www.lendosaficos.com.br/clubedascolecionadoras"
-              >
-                Entrar no Clube <Arrow />
-              </a>
-            </div>
-            <img
-              className="feature-image"
-              src="/images/clube.jpg"
-              alt="Clube das Colecionadoras"
-            />
-          </article>
-          <article className="feature-card map-feature">
-            <div className="feature-copy">
-              <p className="eyebrow">Encontre histórias pelo caminho</p>
-              <h2>Mapa Sáfico</h2>
-              <p>
-                Explore o Mapa Sáfico e encontre editoras, autoras e histórias
-                para celebrar na Bienal do Livro de São Paulo em 2026.
-              </p>
-              <a
-                className="button button-purple"
-                href="https://www.lendosaficos.com.br/mapasaficobienal"
-              >
-                Abrir Mapa Sáfico <Arrow />
-              </a>
-            </div>
-            <img
-              className="feature-image"
-              src="/images/mapa.jpg"
-              alt="Mapa Sáfico Bienal do Livro 2026"
-            />
-          </article>
-        </section>
-        <News articles={articles} />
+        <HomeEditorial articles={articles} />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
 

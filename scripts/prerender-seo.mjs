@@ -250,7 +250,7 @@ function replaceRoot(html, content) {
 
     return html.replace(
         regex,
-        `<div id="root">${content}</div>`
+        () => `<div id="root">${content}</div>`
     );
 }
 
@@ -279,9 +279,6 @@ function renderHeader() {
         <a href="/clubedascolecionadoras">
           Clube das Colecionadoras
         </a>
-        <a href="/mapasaficobienal">
-          Mapa Sáfico
-        </a>
         <a href="/blog">Blog</a>
       </nav>
     </header>
@@ -306,7 +303,7 @@ function renderFooter() {
 
 function renderHome(articles) {
     const latest = articles
-        .slice(0, 3)
+        .slice(0, 4)
         .map(
             (article) => `
         <article>
@@ -342,38 +339,26 @@ function renderHome(articles) {
       </section>
 
       <section class="wrap">
-        <h2>Livros sáficos para descobrir em 2026</h2>
-
-        <p>
-          Conheça lançamentos, romances, autoras e
-          novas histórias da literatura sáfica.
-        </p>
-
-        <a href="/lista120livrossaficos">
-          Ver livros sáficos lançados em 2026
-        </a>
-      </section>
-
-      <section class="wrap">
-        <h2>Projetos Lendo Sáficos</h2>
-
-        <p>
-          <a href="/clubedascolecionadoras">
-            Clube das Colecionadoras
-          </a>
-        </p>
-
-        <p>
-          <a href="/mapasaficobienal">
-            Mapa Sáfico da Bienal do Livro de São Paulo 2026
-          </a>
-        </p>
-      </section>
-
-      <section class="wrap">
-        <h2>Últimas matérias</h2>
+        <h2>Para ler agora</h2>
         ${latest}
         <a href="/blog">Ver todas as matérias</a>
+        <nav aria-label="Explore por categoria">
+          <a href="/lista120livrossaficos">Lançamentos</a>
+          <a href="/blog">Ver todas as categorias</a>
+        </nav>
+      </section>
+      <section class="wrap">
+        <h2>Livros em destaque</h2>
+        <p>Obras que apoiam o Lendo Sáficos e ajudam a manter o projeto no ar.</p>
+      </section>
+      <section class="wrap">
+        <h2>Clube das Colecionadoras</h2>
+        <p>Seu álbum virtual de literatura sáfica. Responda quizzes, colecione figurinhas e desbloqueie recompensas.</p>
+        <a href="/clubedascolecionadoras">Entrar no Clube</a>
+      </section>
+      <section class="wrap">
+        <h2>Receba novidades no seu e-mail</h2>
+        <p>Lançamentos, listas e matérias do Lendo Sáficos.</p>
       </section>
     </main>
 
